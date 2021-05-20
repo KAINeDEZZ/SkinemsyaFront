@@ -4,12 +4,12 @@ import { Panel, PanelHeader, Header, Button, Group, Cell, Div, Avatar} from '@vk
 import styles from './MainPage.module.css';
 const MainPage = ({ id, go, fetchedUser }) => (
 	<Panel id={id}>
-		<PanelHeader><span className={styles.Title}>Скинемся</span></PanelHeader>
-		<Header><span className={styles.List}>Список корзин</span></Header>
-		<Header mode="secondary">Список корзин пуст</Header>
+		<PanelHeader><span className={styles.Title}><h1>Скинемся</h1></span></PanelHeader>
+						<div className={styles.Search__placeholderText}>Поиск...</div>
+		<div className={styles.List}><h3>Список корзин пуст</h3></div>
 
 			<Div>
-				<Button  stretched size="l" mode="secondary" onClick={go} data-to="persik">
+				<Button className={styles.BigButton} stretched size="l" mode="secondary" onClick={go} data-to="persik">
 					ДОБАВИТЬ ВКИД
 				</Button>
 			</Div>
