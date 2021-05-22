@@ -1,14 +1,22 @@
 import React from 'react';
+import $ from 'jquery';
 import PropTypes from 'prop-types';
-import { Panel, PanelHeader, Header, Button, Group, Cell, Div, Avatar} from '@vkontakte/vkui';
+import {Panel, PanelHeader, Header, Button, Group, Cell, Div, Avatar, PanelHeaderBack, Input} from '@vkontakte/vkui';
 import styles from './MainPage.module.css';
 const MainPage = ({ id, go, fetchedUser }) => (
 	<Panel id={id}>
-		<PanelHeader><span className={styles.Title}><h1>Скинемся</h1></span></PanelHeader>
-						<div className={styles.Search__placeholderText}>Поиск...</div>
-		<div className={styles.List}><h3>Список корзин пуст</h3></div>
+		<PanelHeader>
+			Скинемся
+		</PanelHeader>
 
-			<Div>
+		<Div>
+			<Input onChange={(el=this) => {jija(el)}}/>
+		</Div>
+
+		<div className={styles.List}>
+			<h3>Список корзин пуст</h3></div>
+
+			<Div className={styles.AddCartContainer}>
 				<Button className={styles.BigButton} stretched size="l" mode="secondary" onClick={go} data-to="persik">
 					ДОБАВИТЬ ВКИД
 				</Button>
@@ -16,6 +24,18 @@ const MainPage = ({ id, go, fetchedUser }) => (
 
 	</Panel>
 );
+
+function jija(element) {
+	let $input = $(element.target)[0]
+
+	$.get({
+		url: 'https://dezz.space/',
+		data: {
+			find: $input.value
+		},
+		success: (response) => {console.log(response)},
+	})
+}
 
 MainPage.propTypes = {
 	id: PropTypes.string.isRequired,

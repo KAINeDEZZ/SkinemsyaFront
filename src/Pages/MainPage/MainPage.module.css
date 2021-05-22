@@ -6,7 +6,7 @@
   font-weight: 800;
   font-family: "TT Commons",-apple-system,system-ui,Helvetica Neue,Roboto,sans-serif;
   font-family: var(--font-tt);
-  margin-left: 50px;
+  margin-left: 50%;
 }
 .List{
   margin-left: 230px;
@@ -26,7 +26,19 @@
   margin-top: 10px;
 }
 .BigButton {
+  /*flex: 1 0 auto;*/
   background-color: blueviolet;
   color: aliceblue;
-  margin-top: 178px;
+  align-self: flex-end;
+  /*margin-top: 178px;*/
+}
+
+.AddCartContainer{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #0a0a0a;
+
+  /*position: absolute;*/
+  /*height: 80px;*/
 }
