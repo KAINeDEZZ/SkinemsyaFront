@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import bridge from '@vkontakte/vk-bridge';
 import { View, ScreenSpinner, AdaptivityProvider, AppRoot } from '@vkontakte/vkui';
 import '@vkontakte/vkui/dist/vkui.css';
-
 import MainPage from './Pages/MainPage/MainPage';
-import Persik from './panels/Persik';
+import CreateList from './Pages/CreateList/CreateList';
 
 const App = () => {
-	const [activePanel, setActivePanel] = useState('home');
+	const [activePanel, setActivePanel] = useState('mainpage');
 	const [fetchedUser, setUser] = useState(null);
 	const [popout, setPopout] = useState(<ScreenSpinner size='large' />);
 
@@ -35,8 +34,8 @@ const App = () => {
 		<AdaptivityProvider>
 			<AppRoot>
 				<View activePanel={activePanel} popout={popout}>
-					<MainPage id='home' fetchedUser={fetchedUser} go={go} />
-					<Persik id='persik' go={go} />
+					<MainPage id='mainpage' fetchedUser={fetchedUser} go={go} />
+					<CreateList id='createlist' go={go} />
 				</View>
 			</AppRoot>
 		</AdaptivityProvider>

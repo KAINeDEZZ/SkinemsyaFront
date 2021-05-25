@@ -14,10 +14,10 @@ const MainPage = ({ id, go, fetchedUser }) => (
 		</Div>
 
 		<div className={styles.List}>
-			<h3>Список корзин пуст</h3></div>
+			<span>Список корзин пуст</span></div>
 
 			<Div className={styles.AddCartContainer}>
-				<Button className={styles.BigButton} stretched size="l" mode="secondary" onClick={go} data-to="persik">
+				<Button className={styles.BigButton} stretched size="l" mode="secondary" onClick={go} data-to="createlist">
 					ДОБАВИТЬ ВКИД
 				</Button>
 			</Div>
@@ -27,8 +27,7 @@ const MainPage = ({ id, go, fetchedUser }) => (
 
 function jija(element) {
 	let $input = $(element.target)[0]
-
-	$.get({
+    	$.get({
 		url: 'https://dezz.space/',
 		data: {
 			find: $input.value

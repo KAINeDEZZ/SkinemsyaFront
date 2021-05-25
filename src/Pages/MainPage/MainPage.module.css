@@ -9,9 +9,9 @@
   margin-left: 50%;
 }
 .List{
-  margin-left: 230px;
-  margin-top: 100px;
   font-weight: normal;
+  text-align: center;
+  margin-top: 30%;
 }
 .h4 {
   display: block;
@@ -27,17 +27,17 @@
 }
 .BigButton {
   /*flex: 1 0 auto;*/
-  background-color: blueviolet;
+  background-color: #1d3a5c;
   color: aliceblue;
   align-self: flex-end;
-  /*margin-top: 178px;*/
 }
 
 .AddCartContainer{
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: #0a0a0a;
+  margin-top: 30%;
+  background-color: #6f7985;
 
   /*position: absolute;*/
   /*height: 80px;*/
