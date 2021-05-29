@@ -13,8 +13,8 @@ const MainPage = ({ id, go, fetchedUser }) => (
 			<Input onChange={(el=this) => {jija(el)}}/>
 		</Div>
 
-		<div className={styles.List}>
-			<span>Список корзин пуст</span></div>
+		<Div className={styles.List}>
+			<span>Список корзин пуст</span></Div>
 
 			<Div className={styles.AddCartContainer}>
 				<Button className={styles.BigButton} stretched size="l" mode="secondary" onClick={go} data-to="createlist">
