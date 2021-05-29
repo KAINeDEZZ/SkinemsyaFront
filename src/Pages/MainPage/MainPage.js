@@ -8,11 +8,15 @@ const MainPage = ({ id, go, fetchedUser }) => (
 		<PanelHeader>
 			Скинемся
 		</PanelHeader>
-
 		<Div>
 			<Input onChange={(el=this) => {jija(el)}}/>
 		</Div>
-
+		<Div>
+			<Basket title="Название"/>
+			<Basket description="Описание"/>
+			<Basket price="Стоимость"/>
+			<Basket counter="Сколько скинулись"/>
+		</Div>
 		<Div className={styles.List}>
 			<span>Список корзин пуст</span></Div>
 
@@ -48,5 +52,12 @@ MainPage.propTypes = {
 		}),
 	}),
 };
+function Basket (props) {
+	return (<Div>
+		<list>
+		<label>{props.title},{props.description},{props.price},{props.counter}</label>
+		</list>
+	</Div>)
+}
 
 export default MainPage;

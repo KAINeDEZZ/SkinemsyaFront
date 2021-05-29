@@ -25,7 +25,7 @@ const CreateList = ({id, go,fetchedUser}) => (
 			<Input endvkid/>
 		</Div>
 				<Div>
-					<Button size="l" stretched style={{ marginLeft: 10 }}onClick={go} data-to="listadmin">СОЗДАТЬ</Button>
+					<Button size="l" stretched onClick={go} data-to="listadmin">СОЗДАТЬ</Button>
 				</Div>
 	</Panel>
 );
