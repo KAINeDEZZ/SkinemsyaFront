@@ -1,53 +1,69 @@
 import React, { useState, useEffect } from 'react';
 import bridge from '@vkontakte/vk-bridge';
-import { View, ScreenSpinner, AdaptivityProvider, AppRoot } from '@vkontakte/vkui';
+import { View, AdaptivityProvider, AppRoot } from '@vkontakte/vkui';
 import '@vkontakte/vkui/dist/vkui.css';
-import MainPage from './Pages/MainPage/MainPage';
-import CreateList from './Pages/CreateList/CreateList';
-import List from "./Pages/ListAdmin/List";
-import Information from "./Pages/Information/Information";
-import RefactorInfo from "./Pages/RefactorInfo/RefactorInfo";
-import Product from "./Pages/AddProducts/Product";
+import {createScopedElement} from "@vkontakte/vkui/dist/lib/jsxRuntime";
 
-const App = () => {
-	const [activePanel, setActivePanel] = useState('mainpage');
-	const [fetchedUser, setUser] = useState(null);
-	const [popout, setPopout] = useState(<ScreenSpinner size='large' />);
+import {Backend} from "./services/backendConnect";
 
-	useEffect(() => {
-		bridge.subscribe(({ detail: { type, data }}) => {
-			if (type === 'VKWebAppUpdateConfig') {
-				const schemeAttribute = document.createAttribute('scheme');
-				schemeAttribute.value = data.scheme ? data.scheme : 'client_light';
-				document.body.attributes.setNamedItem(schemeAttribute);
-			}
-		});
-		async function fetchData() {
-			const user = await bridge.send('VKWebAppGetUserInfo');
-			setUser(user);
-			setPopout(null);
+
+// import CreateList from './Pages/CreateList/CreateList';
+// import List from "./Pages/ListAdmin/List";
+// import Information from "./Pages/Information/Information";
+// import RefactorInfo from "./Pages/RefactorInfo/RefactorInfo";
+// import Product from "./Pages/AddProducts/Product";
+// import ErrorPage from "./Pages/ErrorPage/ErrorPage";
+
+
+import Loading from './Pages/js/Loading'
+import MainPage from './Pages/js/MainPage';
+import AuthError from "./Pages/js/AuthError";
+
+
+
+class App extends React.Component{
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			activePanel: 'loading'
 		}
-		fetchData();
-	}, []);
 
-	const go = e => {
-		setActivePanel(e.currentTarget.dataset.to);
-	};
+		this.backend = new Backend()
+		this.backend.auth().then(
+			isAuth => {
+				if (isAuth)
+					this.go('mainPage')
 
-	return (
-		<AdaptivityProvider>
-			<AppRoot>
-				<View activePanel={activePanel} popout={popout}>
-					<MainPage id='mainpage' fetchedUser={fetchedUser} go={go} />
-					<CreateList id='createlist' fetchedUser={fetchedUser} go={go} />
-					<List id= 'listadmin' go={go} />
-					<Information id= 'info' fetchedUser={fetchedUser} go={go} />
-					<RefactorInfo id= 'refactorinfo' go={go} />
-					<Product id= 'add' go={go} />
-				</View>
-			</AppRoot>
-		</AdaptivityProvider>
-	);
+				else
+					this.go('authError')
+			}
+		)
+	}
+
+	go = (panel_id) => {
+		this.setState({activePanel: panel_id})
+	}
+
+	render() {
+		return(
+			<AdaptivityProvider>
+				<AppRoot>
+					<View activePanel={this.state.activePanel}>
+						<Loading id='loading' go={this.go}/>
+						<AuthError id='authError' go={this.go}/>
+						<MainPage id='mainPage' go={this.go}/>
+						{/*<CreateList id='createlist' fetchedUser={fetchedUser} go={go} go_to={go_to}/>*/}
+						{/*<List id= 'listadmin' go={this.go} />*/}
+						{/*<Information id= 'info' fetchedUser={fetchedUser} go={go} />*/}
+						{/*<RefactorInfo id= 'refactorinfo' go={this.go} />*/}
+						{/*<Product id= 'add' go={go} />*/}
+
+					</View>
+				</AppRoot>
+			</AdaptivityProvider>
+		)
+	}
 }
 
 export default App;
