@@ -6,7 +6,6 @@ import {Panel, PanelHeader, ScreenSpinner} from '@vkontakte/vkui';
 class Loading extends React.Component{
     constructor(props) {
         super(props);
-        this.go = props.go
 
     }
     render() {
@@ -24,8 +23,7 @@ class Loading extends React.Component{
 
 
 Loading.propTypes = {
-    id: PropTypes.string.isRequired,
-    go: PropTypes.func.isRequired
+    id: PropTypes.string.isRequired
 };
 
 

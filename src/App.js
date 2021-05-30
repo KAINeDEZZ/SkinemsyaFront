@@ -16,8 +16,11 @@ import {Backend} from "./services/backendConnect";
 
 
 import Loading from './Pages/js/Loading'
-import MainPage from './Pages/js/MainPage';
 import AuthError from "./Pages/js/AuthError";
+import Error from "./Pages/js/Error";
+import Main from './Pages/js/Main';
+import EditPurchase from "./Pages/js/EditPurchase";
+import Purchase from "./Pages/js/Purchase";
 
 
 
@@ -29,11 +32,12 @@ class App extends React.Component{
 			activePanel: 'loading'
 		}
 
-		this.backend = new Backend()
-		this.backend.auth().then(
+		this.pageData = undefined
+
+		Backend.auth().then(
 			isAuth => {
 				if (isAuth)
-					this.go('mainPage')
+					this.go('main')
 
 				else
 					this.go('authError')
@@ -41,8 +45,12 @@ class App extends React.Component{
 		)
 	}
 
-	go = (panel_id) => {
+	go = panel_id => {
 		this.setState({activePanel: panel_id})
+	}
+
+	goNode = e => {
+		this.setState({activePanel: e.currentTarget.dataset.to})
 	}
 
 	render() {
@@ -50,10 +58,12 @@ class App extends React.Component{
 			<AdaptivityProvider>
 				<AppRoot>
 					<View activePanel={this.state.activePanel}>
-						<Loading id='loading' go={this.go}/>
-						<AuthError id='authError' go={this.go}/>
-						<MainPage id='mainPage' go={this.go}/>
-						{/*<CreateList id='createlist' fetchedUser={fetchedUser} go={go} go_to={go_to}/>*/}
+						<Loading id='loading'/>
+						<AuthError id='authError'/>
+						<Error id='error' goNode={this.goNode}/>
+						<Main id='main' go={this.go} goNode={this.goNode} purchases={this.state.purchases}/>
+						<EditPurchase id='editPurchase' go={this.go} goNode={this.goNode}/>
+						<Purchase id='purchase' goNode={this.goNode}/>
 						{/*<List id= 'listadmin' go={this.go} />*/}
 						{/*<Information id= 'info' fetchedUser={fetchedUser} go={go} />*/}
 						{/*<RefactorInfo id= 'refactorinfo' go={this.go} />*/}

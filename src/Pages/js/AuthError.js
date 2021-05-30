@@ -27,7 +27,6 @@ class AuthError extends React.Component{
 
 AuthError.propTypes = {
     id: PropTypes.string.isRequired,
-    go: PropTypes.func.isRequired
 };
 
 

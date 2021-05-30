@@ -1,35 +1,62 @@
 import $ from "jquery";
 
 export class Backend{
-    constructor() {
-        this.serverURL = 'https://dezz.space/'
-        this.authParams = null
-    }
+    static authParams = null
+    static serverURL = 'https://dezz.space'
+    static purchase_id = undefined
 
-    async auth(){
-        let params = this.__getKeysToAuth()
+    static async auth(){
+        let params = Backend.__getKeysToAuth()
         try {
             let response = await $.get({
-                url: `${this.serverURL}auth/`,
+                url: `${Backend.serverURL}/auth/`,
                 data: params
             })
 
-            this.authParams = {
+            Backend.authParams = {
                 token: response.token,
                 user_id: params.vk_user_id
             }
         }
 
         catch{
-            this.authParams = false
+            Backend.authParams = false
         }
-        return (this.authParams !== false)
+        return (Backend.authParams !== false)
     }
 
-    __getKeysToAuth(){
+    static __getKeysToAuth(){
         let qs = require('querystring');
 
         let params = window.location.search.slice(1);
         return (qs.parse(params))
+    }
+
+    static async callMethod(methodType, method, args){
+        args = Object.assign({}, Backend.authParams, args)
+        if (method === 'post')
+            return await Backend.__post(method, args)
+        else
+            return await Backend.__get(method, args)
+    }
+
+    static async __post(method, args){
+        try {
+            return await $.post({
+                url: `${Backend.serverURL}/${method}/`,
+                data: args
+            })
+        }
+        catch {return false}
+    }
+
+    static async __get(method, args){
+        try {
+            return await $.get({
+                url: `${Backend.serverURL}/${method}/`,
+                data: args
+            })
+        }
+        catch {return false}
     }
 }
