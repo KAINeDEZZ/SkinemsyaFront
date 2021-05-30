@@ -7,7 +7,7 @@ import {
 	PanelHeader,
 	Button,
 	Div,
-	Input, List, Cell, RichCell,
+	Input, List, Cell, RichCell, TooltipContainer,
 } from '@vkontakte/vkui';
 
 import {Backend} from "../../services/backendConnect";
@@ -43,11 +43,13 @@ class Main extends React.Component{
 					<PurchasesList purchases={this.state.purchases} go={this.props.go}/>
 				</Div>
 
-				<Div>
-					<Button stretched size="l" mode="secondary" onClick={this.props.goNode} data-to="editPurchase">
-						ДОБАВИТЬ ВКИД
-					</Button>
-				</Div>
+				<TooltipContainer fixed style={{ position: 'fixed', bottom: 0, width: '100%' }}>
+					<Div>
+						<Button stretched size="l" onClick={this.props.goNode} data-to="editPurchase">
+							ДОБАВИТЬ ВКИД
+						</Button>
+					</Div>
+				</TooltipContainer>
 			</Panel>
 		)
 	}

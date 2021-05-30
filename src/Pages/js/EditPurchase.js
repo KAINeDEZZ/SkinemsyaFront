@@ -42,7 +42,6 @@ class EditPurchase extends React.Component{
 
     submit(){
         if (this.validate()){
-            this.props.go('loading')
             let args = Object.assign({}, this.state)
 
             args['billing_at'] = `${this.state.billing_at.year}-${this.state.billing_at.month}-${this.state.billing_at.day}T00:00`
@@ -54,21 +53,20 @@ class EditPurchase extends React.Component{
                         Backend.purchase_id = response.id
                         this.props.go('purchase')
                     }
+                    else
+                        this.props.go('error')
                 }
             )
         }
     }
 
     validate(){
-        console.log(this.state)
         if (this.state.title  === '')
             return false
 
         let now = new Date()
         let billing_at = this.dict_to_date(this.state.billing_at)
         let ending_at = this.dict_to_date(this.state.ending_at)
-
-        console.log(now.valueOf(), billing_at.valueOf(), ending_at.valueOf())
 
         return !(now.valueOf() > billing_at.valueOf() || billing_at.valueOf() > ending_at.valueOf());
 

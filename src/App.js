@@ -21,6 +21,7 @@ import Error from "./Pages/js/Error";
 import Main from './Pages/js/Main';
 import EditPurchase from "./Pages/js/EditPurchase";
 import Purchase from "./Pages/js/Purchase";
+import EditProduct from "./Pages/js/EditProduct";
 
 
 
@@ -37,7 +38,7 @@ class App extends React.Component{
 		Backend.auth().then(
 			isAuth => {
 				if (isAuth)
-					this.go('main')
+					this.go('error')
 
 				else
 					this.go('authError')
@@ -63,7 +64,8 @@ class App extends React.Component{
 						<Error id='error' goNode={this.goNode}/>
 						<Main id='main' go={this.go} goNode={this.goNode} purchases={this.state.purchases}/>
 						<EditPurchase id='editPurchase' go={this.go} goNode={this.goNode}/>
-						<Purchase id='purchase' goNode={this.goNode}/>
+						<Purchase id='purchase' go={this.go} goNode={this.goNode}/>
+						<EditProduct id='editProduct' go={this.go} goNode={this.goNode}/>
 						{/*<List id= 'listadmin' go={this.go} />*/}
 						{/*<Information id= 'info' fetchedUser={fetchedUser} go={go} />*/}
 						{/*<RefactorInfo id= 'refactorinfo' go={this.go} />*/}
