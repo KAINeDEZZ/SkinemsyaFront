@@ -5,6 +5,7 @@ import '@vkontakte/vkui/dist/vkui.css';
 import {createScopedElement} from "@vkontakte/vkui/dist/lib/jsxRuntime";
 
 import {Backend} from "./services/backendConnect";
+// import {VkToken} from "./services/context";
 
 
 // import CreateList from './Pages/CreateList/CreateList';
@@ -25,7 +26,6 @@ import EditProduct from "./Pages/js/EditProduct";
 import PurchaseInfo from "./Pages/js/PurchaseInfo";
 import InviteMembers from "./Pages/js/InviteMembers";
 import UserInvites from "./Pages/js/UserInvites";
-
 
 
 class App extends React.Component{

@@ -13,27 +13,49 @@ import {
     PanelHeaderBack,
     SimpleCell, SubnavigationBar, SubnavigationButton, View
 } from '@vkontakte/vkui';
+
 import {
     Icon24Add,
     Icon24ScanViewfinderOutline,
     Icon24UserAddOutline,
     Icon28AddOutline,
-    Icon28DeleteOutline, Icon28EditOutline
+    Icon28DeleteOutline,
+    Icon28EditOutline
 } from "@vkontakte/icons";
+
 import {Backend} from "../../services/backendConnect";
+
 import bridge from "@vkontakte/vk-bridge";
 import InviteMembers from "./InviteMembers";
 
+const IsOwnerContext = React.createContext(undefined)
 
 class PurchaseInfo extends React.Component{
     constructor(props) {
         super(props);
 
         this.state = {
-            popout: null
+            popout: null,
+            is_owner: null
         }
 
+        // this.context = {
+        //     is_owner: IsOwner
+        // }
+
         this.confirmDelete = this.confirmDelete.bind(this);
+        this.is_owner = this.is_owner.bind(this)
+    }
+
+    componentDidMount() {
+        Backend.callMethod('get', 'purchase/is_owner', {purchase_id: Backend.purchase_id}).then(
+            response =>  {this.setState({is_owner: response.is_admin})}
+        )
+        // this.is_owner(is_owner => ))
+    }
+
+    is_owner(){
+        return this.state.is_owner
     }
 
     confirmDelete () {
@@ -76,27 +98,35 @@ class PurchaseInfo extends React.Component{
     render() {
         return (
             <Panel id={this.props.id}>
-                <PanelHeader left={<PanelHeaderBack onClick={this.props.goNode} data-to="purchase"/>}>
-                    Информация
-                </PanelHeader>
+                <IsOwnerContext.Provider value={this.state.is_owner}>
+
+                    <PanelHeader left={<PanelHeaderBack onClick={this.props.goNode} data-to="purchase"/>}>
+                        Информация
+                    </PanelHeader>
 
                     <PurchaseConfig go={this.props.go}/>
                     <PurchaseMembers go={this.props.go}/>
 
-                {/*{*/}
-                {/*    // this.state.purchase.is_owner === 1 &&*/}
-                    <Group>
-                        <Header>
-                            Управление вкидом
-                        </Header>
+                    <IsOwnerContext.Consumer>
+                        {is_owner => (
+                            is_owner === true &&
+                            <Group>
+                                <Header>
+                                    Управление вкидом
+                                </Header>
 
-                        <CellButton  before={<Icon28EditOutline/>}>
-                            Редактировать
-                        </CellButton>
-                        <CellButton  before={<Icon28DeleteOutline/>} mode="danger" onClick={this.confirmDelete}>
-                            Удалить
-                        </CellButton>
-                    </Group>
+                                <CellButton before={<Icon28EditOutline/>}>
+                                    Редактировать
+                                </CellButton>
+                                <CellButton before={<Icon28DeleteOutline/>} mode="danger" onClick={this.confirmDelete}>
+                                    Удалить
+                                </CellButton>
+                            </Group>
+                        )}
+
+                    </IsOwnerContext.Consumer>
+
+                </IsOwnerContext.Provider>
             </Panel>
         )
     }
@@ -115,9 +145,8 @@ class PurchaseConfig extends React.Component{
     componentDidMount() {
         Backend.callMethod('get', 'purchase/get', {purchase_id: Backend.purchase_id}).then(
             response =>  {
-                if (response !== false) {
+                if (response !== false)
                     this.setState({purchase: response})
-                }
                 else
                     this.props.go('error')
             }
@@ -164,7 +193,6 @@ class PurchaseConfig extends React.Component{
 class PurchaseMembers extends React.Component{
     constructor(props) {
         super(props);
-
         this.getUsersData = this.getUsersData.bind(this)
     }
 
@@ -191,12 +219,20 @@ class PurchaseMembers extends React.Component{
     render() {
         return (
             <Group>
-                <Members getUsersData={this.getUsersData} go={this.props.go}/>
-                <InvitedUsers getUsersData={this.getUsersData} go={this.props.go}/>
+                <Members getUsersData={this.getUsersData} go={this.props.go} is_owner={this.props.is_owner}/>
+
+                <IsOwnerContext.Consumer>
+                    {is_owner => (
+                        is_owner === true &&
+                        <InvitedUsers getUsersData={this.getUsersData} go={this.props.go}/>
+                    )}
+                </IsOwnerContext.Consumer>
+
             </Group>
         )
     }
 }
+
 
 class Members extends React.Component{
     constructor(props) {
@@ -263,6 +299,7 @@ class Members extends React.Component{
         )
     }
 }
+
 
 class InvitedUsers extends React.Component{
     constructor(props) {
