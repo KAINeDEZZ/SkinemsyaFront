@@ -189,8 +189,10 @@ class PurchaseConfig extends React.Component{
     componentDidMount() {
         Backend.callMethod('get', 'purchase/get', {purchase_id: Backend.purchase_id}).then(
             response =>  {
-                if (response !== false)
+                if (response !== false) {
+                    console.log(response)
                     this.setState({purchase: response})
+                }
                 else
                     this.props.go('error')
             }
@@ -209,7 +211,7 @@ class PurchaseConfig extends React.Component{
                 </SimpleCell>
 
                 {
-                    this.state.description &&
+                    this.state.description !== false &&
                     <SimpleCell>
                         <InfoRow header="Описание">
                             {this.state.purchase.description}
