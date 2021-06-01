@@ -60,7 +60,7 @@ class Purchase extends React.Component {
         Backend.callMethod('get', 'invites/confirm', {invite_id: this.props.purchase.id}).then(
             response => {
                 if (response !== false) {
-                    Backend.purchase_id = response.added_to
+                    Backend.purchase_id = response.purchase_id
                     this.props.go('purchase')
                 } else
                     this.props.go('error')

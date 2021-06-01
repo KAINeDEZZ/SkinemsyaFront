@@ -15,7 +15,6 @@ import EditPurchase from "./Pages/js/EditPurchase";
 import Purchase from "./Pages/js/Purchase";
 import EditProduct from "./Pages/js/EditProduct";
 import PurchaseInfo from "./Pages/js/PurchaseInfo";
-import InviteMembers from "./Pages/js/InviteMembers";
 import UserInvites from "./Pages/js/UserInvites";
 
 
@@ -71,7 +70,6 @@ class App extends React.Component{
 						<Error id='error' goNode={this.goNode}/>
 						<Main id='main' go={this.go} goNode={this.goNode} purchases={this.state.purchases}/>
 
-						<InviteMembers id='inviteMembers' go={this.go} goNode={this.goNode}/>
 						<UserInvites id='userInvites' go={this.go} goNode={this.goNode}/>
 
 						<EditPurchase id='editPurchase' go={this.go} goNode={this.goNode}/>
@@ -81,8 +79,6 @@ class App extends React.Component{
 
 						<EditProduct id='editProduct' go={this.go} goNode={this.goNode}/>
 
-						{/*<List id= 'listadmin' go={this.go} />*/}
-						{/*<Information id= 'info' fetchedUser={fetchedUser} go={go} />*/}
 						{/*<RefactorInfo id= 'refactorinfo' go={this.go} />*/}
 						{/*<Product id= 'add' go={go} />*/}
 

@@ -1,7 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import bridge from "@vkontakte/vk-bridge";
 import {
-    Alert,
     Avatar, Button, Cell,
     CellButton,
     Div,
@@ -11,26 +10,22 @@ import {
     Panel,
     PanelHeader,
     PanelHeaderBack,
-    SimpleCell, SubnavigationBar, SubnavigationButton, View
+    SimpleCell,
+    SubnavigationBar,
+    SubnavigationButton
 } from '@vkontakte/vkui';
 
 import {
-    Icon24Add,
-    Icon24ScanViewfinderOutline,
     Icon24UserAddOutline,
-    Icon28AddOutline,
     Icon28DeleteOutline,
     Icon28EditOutline
 } from "@vkontakte/icons";
 
 import {Backend} from "../../services/backendConnect";
 
-import bridge from "@vkontakte/vk-bridge";
-import InviteMembers from "./InviteMembers";
-
 const IsOwnerContext = React.createContext(undefined)
 
-class PurchaseInfo extends React.Component{
+class PurchaseInfo extends React.Component {
     constructor(props) {
         super(props);
 
@@ -39,26 +34,26 @@ class PurchaseInfo extends React.Component{
             is_owner: null
         }
 
-        // this.context = {
-        //     is_owner: IsOwner
-        // }
-
         this.confirmDelete = this.confirmDelete.bind(this);
-        this.is_owner = this.is_owner.bind(this)
+        this.confirmLeavePurchase = this.confirmLeavePurchase.bind(this)
+
+        this.deletePurchase = this.deletePurchase.bind(this);
+        this.leavePurchase = this.leavePurchase.bind(this)
     }
 
     componentDidMount() {
         Backend.callMethod('get', 'purchase/is_owner', {purchase_id: Backend.purchase_id}).then(
-            response =>  {this.setState({is_owner: response.is_admin})}
+            response => {
+                this.setState({is_owner: response.is_owner})
+            }
         )
-        // this.is_owner(is_owner => ))
     }
 
-    is_owner(){
+    is_owner() {
         return this.state.is_owner
     }
 
-    confirmDelete () {
+    confirmDelete() {
         let props = {
             actions:
                 [
@@ -71,25 +66,60 @@ class PurchaseInfo extends React.Component{
                         title: 'Удалить',
                         autoclose: true,
                         mode: 'destructive',
-                        action: () => this.deletePurchase(),
+                        action: this.deletePurchase,
                     }
                 ],
             actionsLayout: "horizontal",
             onClose: this.props.deletePopout,
             header: "Удаление документа",
-            text: "Вы уверены, что хотите удалить этот документ?",
+            text: "Вы уверены, что хотите удалить этот вкид?",
         }
 
         this.props.setAlertPopout(props)
     }
 
-    deletePurchase(){
+    deletePurchase() {
         Backend.callMethod('get', 'purchase/delete', {purchase_id: Backend.purchase_id}).then(
-            response =>  {
+            response => {
                 if (response !== false) {
                     this.props.go('main')
-                }
-                else
+                } else
+                    this.props.go('error')
+            }
+        )
+    }
+
+    confirmLeavePurchase(){
+        let props = {
+            actions:
+                [
+                    {
+                        title: 'Отмена',
+                        autoclose: true,
+                        mode: 'cancel'
+                    },
+                    {
+                        title: 'Покинуть',
+                        autoclose: true,
+                        mode: 'destructive',
+                        action: this.deletePurchase,
+                    }
+                ],
+            actionsLayout: "horizontal",
+            onClose: this.props.deletePopout,
+            header: "Удаление документа",
+            text: "Вы уверены, что хотите покинуть этот вкид?",
+        }
+
+        this.props.setAlertPopout(props)
+    }
+
+    leavePurchase(){
+        Backend.callMethod('get', 'members/leave', {purchase_id: Backend.purchase_id}).then(
+            response => {
+                if (response !== false) {
+                    this.props.go('main')
+                } else
                     this.props.go('error')
             }
         )
@@ -108,21 +138,35 @@ class PurchaseInfo extends React.Component{
                     <PurchaseMembers go={this.props.go}/>
 
                     <IsOwnerContext.Consumer>
-                        {is_owner => (
-                            is_owner === true &&
-                            <Group>
-                                <Header>
-                                    Управление вкидом
-                                </Header>
+                        {is_owner => {
+                            if (is_owner)
+                                return (
+                                    <Group>
+                                        <Header>
+                                            Управление вкидом
+                                        </Header>
 
-                                <CellButton before={<Icon28EditOutline/>}>
-                                    Редактировать
-                                </CellButton>
-                                <CellButton before={<Icon28DeleteOutline/>} mode="danger" onClick={this.confirmDelete}>
-                                    Удалить
-                                </CellButton>
-                            </Group>
-                        )}
+                                        <CellButton before={<Icon28EditOutline/>}>
+                                            Редактировать
+                                        </CellButton>
+                                        <CellButton before={<Icon28DeleteOutline/>} mode="danger"
+                                                    onClick={this.confirmDelete}>
+                                            Удалить
+                                        </CellButton>
+                                    </Group>
+                                )
+
+                            else
+                                return (
+                                    <Group>
+                                        <Div>
+                                            <Button stretched size="l" mode="destructive" onClick={this.leavePurchase}>
+                                                Покинуть вкид
+                                            </Button>
+                                        </Div>
+                                    </Group>
+                                )
+                        }}
 
                     </IsOwnerContext.Consumer>
 
@@ -242,7 +286,7 @@ class Members extends React.Component{
             members: []
         }
 
-        this.deleteMember = this.deleteMember.bind()
+        this.deleteMember = this.deleteMember.bind(this)
     }
 
     componentDidMount() {
@@ -257,32 +301,26 @@ class Members extends React.Component{
         )
     }
 
-    deleteMember(element){
-        let args = {
+    deleteMember(target_id){
+        Backend.callMethod('get', 'members/delete', {
             purchase_id: Backend.purchase_id,
-            target_id: element.target.id
+            target_id: target_id
+
+        }).then(result => {
+            if (result !== false) {
+                this.frontRemoveUser(target_id)
+            }
+        })
+    }
+
+    frontRemoveUser(target_id){
+        let members = []
+        for (let userData of this.state.members) {
+            if (userData.id !== target_id)
+                members.push(userData)
         }
 
-        // Backend.callMethod('get', 'members/delete', args).then(
-        //     response => {
-        //         if (response !== false)
-        //             bridge.send('VKWebAppCallAPIMethod', {
-        //                 method: 'users.get',
-        //                 params: {
-        //                     user_ids: users,
-        //                     fields: 'photo_50',
-        //                     v: "5.131",
-        //                     request_id: 0,
-        //                     access_token: Backend.vk_token
-        //                 }
-        //
-        //             }).then(response => this.setState({members: response}))
-        //             // this.props.getUsersData(response, usersData => ))
-        //         else
-        //             this.props.go('error')
-
-            // }
-        // )
+        this.setState({members: members})
     }
 
     render() {
@@ -290,9 +328,18 @@ class Members extends React.Component{
             <Group>
                 <Header> Участники </Header>
                 {
-                    this.state.members.map(
-                        member => <Cell id={member.id} removable before={<Avatar
-                            src={member.photo_50}/>}>{member.first_name}{member.last_name}</Cell>
+                    this.state.members.map(member =>
+                        <IsOwnerContext.Consumer>
+                            { is_owner => (
+                                <Cell
+                                    removable={is_owner && member.id != Backend.authParams.user_id}
+                                    before={<Avatar src={member.photo_50}/>}
+                                    onRemove={(event, prop, id=member.id) => this.deleteMember(id)}>
+
+                                    {member.first_name} {member.last_name}
+                                </Cell>
+                            )}
+                        </IsOwnerContext.Consumer>
                     )
                 }
             </Group>
@@ -306,8 +353,7 @@ class InvitedUsers extends React.Component{
         super(props);
 
         this.state = {
-            invites: [],
-            user_data: {}
+            invites: []
         }
 
         this.invite = this.invite.bind(this)
@@ -334,7 +380,7 @@ class InvitedUsers extends React.Component{
 
                     }).then(result => {
                         if (result !== false) {
-                            this.loadUsersData(result.invited_ids)
+                            this.loadUsersData(result)
                         }
                     })
                 }
@@ -354,27 +400,38 @@ class InvitedUsers extends React.Component{
         return udersData.map(userData => userData.id)
     }
 
-    deleteInvite(element){
-        let params = {
+    deleteInvite(target_id){
+        Backend.callMethod('get', 'invites/delete', {
             purchase_id: Backend.purchase_id,
-            target_id: element.target.id
-        }
-        Backend.callMethod('get', 'invites/delete', params).then(response => {
+            target_id: target_id
 
+        }).then(result => {
+            if (result !== false) {
+                this.frontRemoveUser(target_id)
+            }
         })
+    }
+
+    frontRemoveUser(target_id){
+        let invites = []
+        for (let userData of this.state.invites) {
+            if (userData.id !== target_id)
+                invites.push(userData)
+        }
+
+        this.setState({invites: invites})
     }
 
     render() {
         return (
             <Group>
-                <Header> Приглашённые участники </Header>
                 {
-                    this.state.invites.map(member => (
-                            <Cell id={member.id} removable before={<Avatar src={member.photo_50}/>} onRemove={this.deleteInvite}>
-                                {member.first_name}{member.last_name}
-                            </Cell>
-                        )
-                    )
+                    this.state.invites.length > 0 &&
+                    <Header> Приглашённые участники </Header>
+                }
+
+                {
+                    this.state.invites.map(member => <UserContainer member={member}/>)
                 }
 
                 <SubnavigationBar mode="fixed">

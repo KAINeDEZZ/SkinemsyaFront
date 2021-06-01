@@ -4,14 +4,11 @@ import PropTypes from 'prop-types';
 import {
     Button,
     Div,
-    Input,
     Panel,
     PanelHeader,
-    Cell,
     PanelHeaderBack,
-    Avatar,
-    Group,
-    CellButton, TooltipContainer, List, RichCell
+    TooltipContainer,
+    RichCell
 } from '@vkontakte/vkui';
 
 import {Backend} from "../../services/backendConnect";
