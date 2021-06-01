@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Button, Div, Panel, PanelHeader, PanelHeaderBack} from '@vkontakte/vkui';
+import {Div, Panel, PanelHeader, PanelHeaderBack} from '@vkontakte/vkui';
 
 
 class AuthError extends React.Component{
@@ -31,7 +31,6 @@ class AuthError extends React.Component{
                         {'      Но скорее всего кодер долбаёб'}
                     </label>
                 </Div>
-                <Button>asd</Button>
             </Panel>
         )
     }

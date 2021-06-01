@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import bridge from '@vkontakte/vk-bridge';
-import { View, AdaptivityProvider, AppRoot } from '@vkontakte/vkui';
+import {View, AdaptivityProvider, AppRoot, Alert} from '@vkontakte/vkui';
 import '@vkontakte/vkui/dist/vkui.css';
 import {createScopedElement} from "@vkontakte/vkui/dist/lib/jsxRuntime";
 
@@ -22,6 +22,9 @@ import Main from './Pages/js/Main';
 import EditPurchase from "./Pages/js/EditPurchase";
 import Purchase from "./Pages/js/Purchase";
 import EditProduct from "./Pages/js/EditProduct";
+import PurchaseInfo from "./Pages/js/PurchaseInfo";
+import InviteMembers from "./Pages/js/InviteMembers";
+import UserInvites from "./Pages/js/UserInvites";
 
 
 
@@ -30,20 +33,29 @@ class App extends React.Component{
 		super(props);
 
 		this.state = {
-			activePanel: 'loading'
+			activePanel: 'loading',
+			popout: null
 		}
-
-		this.pageData = undefined
 
 		Backend.auth().then(
 			isAuth => {
 				if (isAuth)
-					this.go('error')
+					this.go('main')
 
 				else
 					this.go('authError')
 			}
 		)
+	}
+
+	setAlertPopout = props => {
+		this.setState({
+			popout: <Alert {...props}/>
+		})
+	}
+
+	deletePopout = () => {
+		this.setState({popout: null})
 	}
 
 	go = panel_id => {
@@ -58,14 +70,22 @@ class App extends React.Component{
 		return(
 			<AdaptivityProvider>
 				<AppRoot>
-					<View activePanel={this.state.activePanel}>
+					<View popout={this.state.popout} activePanel={this.state.activePanel}>
 						<Loading id='loading'/>
 						<AuthError id='authError'/>
 						<Error id='error' goNode={this.goNode}/>
 						<Main id='main' go={this.go} goNode={this.goNode} purchases={this.state.purchases}/>
+
+						<InviteMembers id='inviteMembers' go={this.go} goNode={this.goNode}/>
+						<UserInvites id='userInvites' go={this.go} goNode={this.goNode}/>
+
 						<EditPurchase id='editPurchase' go={this.go} goNode={this.goNode}/>
 						<Purchase id='purchase' go={this.go} goNode={this.goNode}/>
+						<PurchaseInfo id='purchaseInfo' go={this.go} goNode={this.goNode} setAlertPopout={this.setAlertPopout} deletePopout={this.deletePopout}/>
+
+
 						<EditProduct id='editProduct' go={this.go} goNode={this.goNode}/>
+
 						{/*<List id= 'listadmin' go={this.go} />*/}
 						{/*<Information id= 'info' fetchedUser={fetchedUser} go={go} />*/}
 						{/*<RefactorInfo id= 'refactorinfo' go={this.go} />*/}

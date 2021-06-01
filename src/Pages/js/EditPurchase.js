@@ -40,17 +40,33 @@ class EditPurchase extends React.Component{
         this.setState(changer);
     }
 
+    dictToISO(dict){
+        let month
+        if (dict.month >= 10)
+            month = dict.month
+        else
+            month = `0${dict.month}`
+
+        let day
+        if (dict.day >= 10)
+            day = dict.day
+        else
+            day = `0${dict.day}`
+
+        return `${dict.year}-${month}-${day}`
+    }
+
     submit(){
         if (this.validate()){
             let args = Object.assign({}, this.state)
 
-            args['billing_at'] = `${this.state.billing_at.year}-${this.state.billing_at.month}-${this.state.billing_at.day}T00:00`
-            args['ending_at'] = `${this.state.ending_at.year}-${this.state.ending_at.month}-${this.state.ending_at.day}T00:00`
+            args['billing_at'] = this.dictToISO(this.state.billing_at)
+            args['ending_at'] = this.dictToISO(this.state.ending_at)
 
-            Backend.callMethod('get', 'create_purchase', args).then(
+            Backend.callMethod('get', 'purchase/create', args).then(
                 response => {
                     if (response){
-                        Backend.purchase_id = response.id
+                        Backend.purchase_id = response.created
                         this.props.go('purchase')
                     }
                     else

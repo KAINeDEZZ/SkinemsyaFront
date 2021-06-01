@@ -18,14 +18,14 @@ import {Backend} from "../../services/backendConnect";
 class Purchase extends React.Component{
     constructor(props) {
         super(props);
-        console.log(Backend.purchase_id)
+
         this.state = {
             purchase: {}
         }
     }
 
     componentDidMount() {
-        Backend.callMethod('get', 'get_purchase', {purchase_id: Backend.purchase_id}).then(
+        Backend.callMethod('get', 'purchase/get', {purchase_id: Backend.purchase_id}).then(
             response =>  {
                 if (response !== false) {
                     this.setState({purchase: response})
@@ -44,16 +44,22 @@ class Purchase extends React.Component{
                 </PanelHeader>
 
                 <Div>
-                    <Button stretched size="l" mode='secondary' onClick={this.props.goNode} data-to="info">ИНФОРМАЦИЯ</Button>
+                    <Button stretched size="l" mode='secondary' onClick={this.props.goNode} data-to="purchaseInfo">ИНФОРМАЦИЯ</Button>
                 </Div>
+                <Div>
+                    Пока что отключил продукты
+                </Div>
+                {/*<ProductsList go={this.props.go}/>*/}
 
-                <ProductsList go={this.props.go}/>
-
-                <TooltipContainer fixed style={{ position: 'fixed', bottom: 10, width: '100%' }}>
-                    <Div>
-                        <Button size="l" stretched onClick={this.props.goNode} data-to="editProduct">ДОБАВИТЬ</Button>
-                    </Div>
-                </TooltipContainer>
+                {
+                    this.state.purchase.is_owner === 1 &&
+                    <TooltipContainer fixed style={{position: 'fixed', bottom: 10, width: '100%'}}>
+                        <Div>
+                            <Button size="l" stretched onClick={this.props.goNode}
+                                    data-to="editProduct">ДОБАВИТЬ</Button>
+                        </Div>
+                    </TooltipContainer>
+                }
             </Panel>
         )
     }

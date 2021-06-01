@@ -7,25 +7,38 @@ import {
 	PanelHeader,
 	Button,
 	Div,
-	Input, List, Cell, RichCell, TooltipContainer,
+	Input, List, Cell, RichCell, TooltipContainer, Link, platform, VKCOM, Counter, Header,
 } from '@vkontakte/vkui';
 
 import {Backend} from "../../services/backendConnect";
+import {Icon12ChevronOutline} from "@vkontakte/icons";
 
 
 class Main extends React.Component{
 	constructor(props) {
 		super(props);
 		this.state = {
-			purchases: []
+			purchases: [],
+			invites: []
 		}
+
+		this.openInvites = this.openInvites.bind(this)
 	}
 
 	componentDidMount() {
-		Backend.callMethod('get', 'get_all_purchases').then((response) => {
-			if (response)
+		Backend.callMethod('get', 'purchase/get_all').then((response) => {
+			if (response !== false)
 				this.setState({purchases: response})
 		})
+
+		Backend.callMethod('get', 'invites/get').then((response) => {
+			if (response !== false)
+				this.setState({invites: response})
+		})
+	}
+
+	openInvites() {
+		this.props.go('userInvites')
 	}
 
 	render() {
@@ -38,6 +51,20 @@ class Main extends React.Component{
 				<Div>
 					<Input/>
 				</Div>
+
+				{
+					this.state.invites.length > 0 &&
+					<Div>
+						<Header
+							stretched
+							aside={<Link>Показать все{platform === VKCOM && <Icon12ChevronOutline/>}</Link>}
+							indicator={<Counter size="s" mode="prominent">{this.state.invites.length}</Counter>}
+							onClick={this.openInvites}
+						>
+							Приглашения
+						</Header>
+					</Div>
+				}
 
 				<Div>
 					<PurchasesList purchases={this.state.purchases} go={this.props.go}/>
