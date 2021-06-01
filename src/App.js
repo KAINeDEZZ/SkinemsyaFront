@@ -37,6 +37,11 @@ class App extends React.Component{
 			popout: null
 		}
 
+		bridge.send('VKWebAppInit').then(result => {})
+		bridge.send("VKWebAppGetAuthToken", {app_id: 7850806, scope: ''}).then(result => {
+			Backend.vk_token = result.access_token
+		})
+
 		Backend.auth().then(
 			isAuth => {
 				if (isAuth)

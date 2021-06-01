@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
     Alert,
-    Avatar, Button,
+    Avatar, Button, Cell,
     CellButton,
     Div,
     Group,
@@ -21,6 +21,8 @@ import {
     Icon28DeleteOutline, Icon28EditOutline
 } from "@vkontakte/icons";
 import {Backend} from "../../services/backendConnect";
+import bridge from "@vkontakte/vk-bridge";
+import InviteMembers from "./InviteMembers";
 
 
 class PurchaseInfo extends React.Component{
@@ -163,45 +165,174 @@ class PurchaseMembers extends React.Component{
     constructor(props) {
         super(props);
 
+        this.getUsersData = this.getUsersData.bind(this)
+    }
+
+    getUsersData(users, callback){
+        try {
+            bridge.send('VKWebAppCallAPIMethod', {
+                method: 'users.get',
+                params: {
+                    user_ids: users.join(', '),
+                    fields: 'photo_50',
+                    v: "5.131",
+                    request_id: 0,
+                    access_token: Backend.vk_token
+                }
+
+            }).then(response => callback(response.response))
+        }
+
+        catch {
+            this.props.go('error')
+        }
+    }
+
+    render() {
+        return (
+            <Group>
+                <Members getUsersData={this.getUsersData} go={this.props.go}/>
+                <InvitedUsers getUsersData={this.getUsersData} go={this.props.go}/>
+            </Group>
+        )
+    }
+}
+
+class Members extends React.Component{
+    constructor(props) {
+        super(props);
+
         this.state = {
             members: []
         }
 
-        this.goToInvite = this.goToInvite.bind(this)
+        this.deleteMember = this.deleteMember.bind()
     }
+
     componentDidMount() {
         Backend.callMethod('get', 'members/get', {purchase_id: Backend.purchase_id}).then(
-            response =>  {
-                if (response !== false) {
-                    this.setState({members: response})
-                }
+            response => {
+                if (response !== false)
+                    this.props.getUsersData(response, usersData => this.setState({members: usersData})
+                    )
                 else
                     this.props.go('error')
             }
         )
     }
 
-    goToInvite(){
-        this.props.go('inviteMembers')
+    deleteMember(element){
+        let args = {
+            purchase_id: Backend.purchase_id,
+            target_id: element.target.id
+        }
+
+        // Backend.callMethod('get', 'members/delete', args).then(
+        //     response => {
+        //         if (response !== false)
+        //             bridge.send('VKWebAppCallAPIMethod', {
+        //                 method: 'users.get',
+        //                 params: {
+        //                     user_ids: users,
+        //                     fields: 'photo_50',
+        //                     v: "5.131",
+        //                     request_id: 0,
+        //                     access_token: Backend.vk_token
+        //                 }
+        //
+        //             }).then(response => this.setState({members: response}))
+        //             // this.props.getUsersData(response, usersData => ))
+        //         else
+        //             this.props.go('error')
+
+            // }
+        // )
     }
 
     render() {
         return (
-            <Group id={'purchaseMembers'}>
+            <Group>
                 <Header> Участники </Header>
-
                 {
                     this.state.members.map(
-                        member => <SimpleCell>{member}</SimpleCell>
+                        member => <Cell id={member.id} removable before={<Avatar
+                            src={member.photo_50}/>}>{member.first_name}{member.last_name}</Cell>
+                    )
+                }
+            </Group>
+        )
+    }
+}
+
+class InvitedUsers extends React.Component{
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            invites: []
+        }
+
+        this.invite = this.invite.bind(this)
+    }
+
+    componentDidMount() {
+        Backend.callMethod('get', 'invites/get_purchase', {purchase_id: Backend.purchase_id}).then(
+            response => {
+                if (response !== false)
+                    this.props.getUsersData(response, usersData => this.setState({invites: usersData}))
+                else
+                    this.props.go('error')
+            }
+        )
+    }
+
+    invite(){
+        bridge.send('VKWebAppGetFriends', {multi: true}).then(
+            response => {
+                if (response) {
+                    response.users.map(user => {
+                        Backend.callMethod('get', 'invites/create', {
+                            purchase_id: Backend.purchase_id,
+                            target_id: user.id
+
+                        }).then(result => {
+                            if (result !== false) {
+                                // let invites = this.state.invites
+                                // invites.push(result)
+                                // this.setState({invites: invites.push(result.id)})
+                            }
+                        })
+                    })
+                }
+            }
+        )
+    }
+
+    deleteInvite(element){
+        let params = {
+            purchase_id: Backend.purchase_id,
+            target_id: element.target.id
+        }
+        Backend.callMethod('get', 'invites/delete', params).then(response => {
+
+        })
+    }
+
+    render() {
+        return (
+            <Group>
+                <Header> Приглашённые участники </Header>
+                {
+                    this.state.invites.map(member => (
+                            <Cell id={member.id} removable before={<Avatar src={member.photo_50}/>} onRemove={this.deleteInvite}>
+                                {member.first_name}{member.last_name}
+                            </Cell>
+                        )
                     )
                 }
 
-                {/*<SimpleCell>Иван Барышев</SimpleCell>*/}
-                {/*<SimpleCell before={<Avatar src={getAvatarUrl('user_lihachyov')} />}>Михаил Лихачёв</SimpleCell>*/}
-                {/*<SimpleCell before={<Avatar src={getAvatarUrl('user_arthurstam')} />}>Artur Stambultsian</SimpleCell>*/}
-
                 <SubnavigationBar mode="fixed">
-                    <SubnavigationButton before={<Icon24UserAddOutline />} size="l" onClick={this.goToInvite}>
+                    <SubnavigationButton before={<Icon24UserAddOutline/>} size="l" onClick={this.invite}>
                         Добавить участника
                     </SubnavigationButton>
                 </SubnavigationBar>

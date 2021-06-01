@@ -38,10 +38,12 @@ const Information = ({id, go,fetchedUser}) => (
             </Cell>
         </Group>}
         <Div>
-            <Button size="l" stretched style={{ marginLeft: 10 }}onClick={go} data-to="refactorinfo">РЕДАКТИРОВАТЬ</Button>
+            <Button size="l" stretched style={{ marginLeft: 10 }} onClick={go} data-to="refactorinfo">РЕДАКТИРОВАТЬ</Button>
         </Div>
     </Panel>
 );
+
+
 Information.propTypes = {
     id: PropTypes.string.isRequired,
     go: PropTypes.func.isRequired,

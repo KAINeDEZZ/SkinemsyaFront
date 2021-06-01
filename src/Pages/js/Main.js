@@ -12,6 +12,7 @@ import {
 
 import {Backend} from "../../services/backendConnect";
 import {Icon12ChevronOutline} from "@vkontakte/icons";
+import bridge from "@vkontakte/vk-bridge";
 
 
 class Main extends React.Component{
