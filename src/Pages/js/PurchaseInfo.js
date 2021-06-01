@@ -306,7 +306,8 @@ class InvitedUsers extends React.Component{
         super(props);
 
         this.state = {
-            invites: []
+            invites: [],
+            user_data: {}
         }
 
         this.invite = this.invite.bind(this)
@@ -316,7 +317,7 @@ class InvitedUsers extends React.Component{
         Backend.callMethod('get', 'invites/get_purchase', {purchase_id: Backend.purchase_id}).then(
             response => {
                 if (response !== false)
-                    this.props.getUsersData(response, usersData => this.setState({invites: usersData}))
+                    this.loadUsersData(response)
                 else
                     this.props.go('error')
             }
@@ -327,22 +328,30 @@ class InvitedUsers extends React.Component{
         bridge.send('VKWebAppGetFriends', {multi: true}).then(
             response => {
                 if (response) {
-                    response.users.map(user => {
-                        Backend.callMethod('get', 'invites/create', {
-                            purchase_id: Backend.purchase_id,
-                            target_id: user.id
+                    Backend.callMethod('get', 'invites/create_row', {
+                        purchase_id: Backend.purchase_id,
+                        targets_ids: this.getIdListId(response.users).join(', ')
 
-                        }).then(result => {
-                            if (result !== false) {
-                                // let invites = this.state.invites
-                                // invites.push(result)
-                                // this.setState({invites: invites.push(result.id)})
-                            }
-                        })
+                    }).then(result => {
+                        if (result !== false) {
+                            this.loadUsersData(result.invited_ids)
+                        }
                     })
                 }
             }
         )
+    }
+
+    loadUsersData(usersIds){
+        this.props.getUsersData(usersIds, userData => {
+            let invites = this.state.invites
+            invites.push.apply(invites, userData)
+            this.setState({invites: invites})
+        })
+    }
+
+    getIdListId(udersData){
+        return udersData.map(userData => userData.id)
     }
 
     deleteInvite(element){

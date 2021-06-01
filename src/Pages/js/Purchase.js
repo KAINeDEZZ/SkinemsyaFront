@@ -15,7 +15,6 @@ import {
 } from '@vkontakte/vkui';
 
 import {Backend} from "../../services/backendConnect";
-import {PurchaseContext, PurchaseID} from "../../services/context";
 
 
 class Purchase extends React.Component{
@@ -28,8 +27,6 @@ class Purchase extends React.Component{
     }
 
     componentDidMount() {
-        // console.log(PurchaseContext.)
-
         Backend.callMethod('get', 'purchase/get', {purchase_id: Backend.purchase_id}).then(
             response =>  {
                 if (response !== false) {

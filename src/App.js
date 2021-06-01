@@ -5,15 +5,6 @@ import '@vkontakte/vkui/dist/vkui.css';
 import {createScopedElement} from "@vkontakte/vkui/dist/lib/jsxRuntime";
 
 import {Backend} from "./services/backendConnect";
-// import {VkToken} from "./services/context";
-
-
-// import CreateList from './Pages/CreateList/CreateList';
-// import List from "./Pages/ListAdmin/List";
-// import Information from "./Pages/Information/Information";
-// import RefactorInfo from "./Pages/RefactorInfo/RefactorInfo";
-// import Product from "./Pages/AddProducts/Product";
-// import ErrorPage from "./Pages/ErrorPage/ErrorPage";
 
 
 import Loading from './Pages/js/Loading'
@@ -37,7 +28,6 @@ class App extends React.Component{
 			popout: null
 		}
 
-		bridge.send('VKWebAppInit').then(result => {})
 		bridge.send("VKWebAppGetAuthToken", {app_id: 7850806, scope: ''}).then(result => {
 			Backend.vk_token = result.access_token
 		})
