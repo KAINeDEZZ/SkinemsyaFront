@@ -102,7 +102,7 @@ class PurchaseInfo extends React.Component {
                         title: 'Покинуть',
                         autoclose: true,
                         mode: 'destructive',
-                        action: this.deletePurchase,
+                        action: this.leavePurchase,
                     }
                 ],
             actionsLayout: "horizontal",
@@ -160,7 +160,7 @@ class PurchaseInfo extends React.Component {
                                 return (
                                     <Group>
                                         <Div>
-                                            <Button stretched size="l" mode="destructive" onClick={this.leavePurchase}>
+                                            <Button stretched size="l" mode="destructive" onClick={this.confirmLeavePurchase}>
                                                 Покинуть вкид
                                             </Button>
                                         </Div>
@@ -432,7 +432,12 @@ class InvitedUsers extends React.Component{
                 }
 
                 {
-                    this.state.invites.map(member => <UserContainer member={member}/>)
+                    this.state.invites.map(member => (
+                            <Cell id={member.id} removable before={<Avatar src={member.photo_50}/>} onRemove={(event, prop, id=member.id) => this.deleteInvite(id)}>
+                                {member.first_name} {member.last_name}
+                            </Cell>
+                        )
+                    )
                 }
 
                 <SubnavigationBar mode="fixed">
