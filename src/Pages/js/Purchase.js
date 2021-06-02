@@ -45,10 +45,8 @@ class Purchase extends React.Component{
                 <Div>
                     <Button stretched size="l" mode='secondary' onClick={this.props.goNode} data-to="purchaseInfo">ИНФОРМАЦИЯ</Button>
                 </Div>
-                <Div>
-                    Пока что отключил продукты
-                </Div>
-                {/*<ProductsList go={this.props.go}/>*/}
+
+                <ProductsList go={this.props.go}/>
 
                 {
                     this.state.purchase.is_owner === 1 &&
@@ -75,11 +73,11 @@ class ProductsList extends React.Component{
     }
 
     componentDidMount() {
-        Backend.callMethod('get', 'get_products', {purchase_id: Backend.purchase_id}).then(
+        Backend.callMethod('get', 'products/get_all', {purchase_id: Backend.purchase_id}).then(
             response =>  {
-                if (response) {
+                if (response)
                     this.setState({products: response})
-                }
+
                 else
                     this.props.go('error')
 

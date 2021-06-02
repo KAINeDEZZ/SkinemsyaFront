@@ -35,11 +35,11 @@ class EditProduct extends React.Component{
 
     submit(){
         if (this.validate()) {
-            Backend.callMethod('post', 'create_product', this.state).then(
+            Backend.callMethod('post', 'products/create', this.state).then(
                 response => {
-                    if (response !== false) {
+                    if (response !== false)
                         this.props.go('purchase')
-                    }
+
                     else
                         this.props.go('error')
                 }

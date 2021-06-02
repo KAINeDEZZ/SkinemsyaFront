@@ -189,10 +189,9 @@ class PurchaseConfig extends React.Component{
     componentDidMount() {
         Backend.callMethod('get', 'purchase/get', {purchase_id: Backend.purchase_id}).then(
             response =>  {
-                if (response !== false) {
-                    console.log(response)
+                if (response !== false)
                     this.setState({purchase: response})
-                }
+
                 else
                     this.props.go('error')
             }
