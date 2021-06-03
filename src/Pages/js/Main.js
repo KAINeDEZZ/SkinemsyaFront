@@ -6,12 +6,11 @@ import {
 	PanelHeader,
 	Button,
 	Div,
-	Input, List, Cell, RichCell, TooltipContainer, Link, platform, VKCOM, Counter, Header,
+	Input, List, RichCell, TooltipContainer, Link, platform, VKCOM, Counter, Header,
 } from '@vkontakte/vkui';
 
 import {Backend} from "../../services/backendConnect";
 import {Icon12ChevronOutline} from "@vkontakte/icons";
-import bridge from "@vkontakte/vk-bridge";
 
 
 class Main extends React.Component{
@@ -69,6 +68,7 @@ class Main extends React.Component{
 				<Div>
 					<PurchasesList purchases={this.state.purchases} go={this.props.go}/>
 				</Div>
+				<RichCell/>
 
 				<TooltipContainer fixed style={{ position: 'fixed', bottom: 0, width: '100%' }}>
 					<Div>
