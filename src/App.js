@@ -16,6 +16,7 @@ import Purchase from "./Pages/js/Purchase";
 import EditProduct from "./Pages/js/EditProduct";
 import PurchaseInfo from "./Pages/js/PurchaseInfo";
 import UserInvites from "./Pages/js/UserInvites";
+import PurchaseBill from "./Pages/js/PurchseBill";
 
 
 class App extends React.Component{
@@ -76,12 +77,9 @@ class App extends React.Component{
 						<Purchase id='purchase' go={this.go} goNode={this.goNode}/>
 						<PurchaseInfo id='purchaseInfo' go={this.go} goNode={this.goNode} setAlertPopout={this.setAlertPopout} deletePopout={this.deletePopout}/>
 
+						<PurchaseBill id={'purchaseBill'}  goNode={this.goNode}/>
 
 						<EditProduct id='editProduct' go={this.go} goNode={this.goNode}/>
-
-						{/*<RefactorInfo id= 'refactorinfo' go={this.go} />*/}
-						{/*<Product id= 'add' go={go} />*/}
-
 					</View>
 				</AppRoot>
 			</AdaptivityProvider>
@@ -90,3 +88,11 @@ class App extends React.Component{
 }
 
 export default App;
+
+// Checklist
+// todo Сделать страницу билинга для пользователя
+// todo Сделать развёрнутый просмотр данных для администратора
+// todo Убрать кнопки редактирования и добавления участников в корзине статуса не пик
+// todo Перенаправление страниц после пика
+// todo Поработать с главной страницей
+// todo Добавить редактирование

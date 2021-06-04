@@ -53,7 +53,6 @@ class Main extends React.Component{
 
 				{
 					this.state.invites.length > 0 &&
-					<Div>
 						<Header
 							stretched
 							aside={<Link>Показать все{platform === VKCOM && <Icon12ChevronOutline/>}</Link>}
@@ -62,12 +61,10 @@ class Main extends React.Component{
 						>
 							Приглашения
 						</Header>
-					</Div>
 				}
 
-				<Div>
-					<PurchasesList purchases={this.state.purchases} go={this.props.go}/>
-				</Div>
+
+				<PurchasesList purchases={this.state.purchases} go={this.props.go}/>
 				<RichCell/>
 
 				<TooltipContainer fixed style={{ position: 'fixed', bottom: 0, width: '100%' }}>
@@ -117,7 +114,14 @@ class Purchase extends React.Component {
 
 	choosePurchase(){
 		Backend.purchase_id = this.purchase.id
-		this.props.go('purchase')
+		switch (this.purchase.status) {
+			case 'pick':
+				this.props.go('purchase')
+				break
+
+			case 'bill':
+				this.props.go('purchaseBill')
+		}
 	}
 
 	render() {
