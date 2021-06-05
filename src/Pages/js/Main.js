@@ -6,7 +6,17 @@ import {
 	PanelHeader,
 	Button,
 	Div,
-	Input, List, RichCell, TooltipContainer, Link, platform, VKCOM, Counter, Header,
+	Input,
+	List,
+	RichCell,
+	TooltipContainer,
+	Link,
+	platform,
+	VKCOM,
+	Counter,
+	Header,
+	SubnavigationButton,
+	SubnavigationBar, Group,
 } from '@vkontakte/vkui';
 
 import {Backend} from "../../services/backendConnect";
@@ -47,12 +57,9 @@ class Main extends React.Component{
 					Скинемся
 				</PanelHeader>
 
-				<Div>
-					<Input/>
-				</Div>
-
 				{
 					this.state.invites.length > 0 &&
+					<Group>
 						<Header
 							stretched
 							aside={<Link>Показать все{platform === VKCOM && <Icon12ChevronOutline/>}</Link>}
@@ -61,19 +68,21 @@ class Main extends React.Component{
 						>
 							Приглашения
 						</Header>
+					</Group>
 				}
 
+				<Group>
+					<PurchasesList purchases={this.state.purchases} go={this.props.go}/>
+					<RichCell disabled/>
 
-				<PurchasesList purchases={this.state.purchases} go={this.props.go}/>
-				<RichCell disabled/>
-
-				<TooltipContainer fixed style={{ position: 'fixed', bottom: 0, width: '100%' }}>
-					<Div>
-						<Button stretched size="l" onClick={this.props.goNode} data-to="editPurchase">
-							ДОБАВИТЬ ВКИД
-						</Button>
-					</Div>
-				</TooltipContainer>
+					<TooltipContainer fixed style={{ position: 'fixed', bottom: 0, width: '100%' }}>
+						<Div>
+							<Button stretched size="l" onClick={this.props.goNode} data-to="editPurchase">
+								Длбавить вкид
+							</Button>
+						</Div>
+					</TooltipContainer>
+				</Group>
 			</Panel>
 		)
 	}
@@ -109,46 +118,67 @@ class Purchase extends React.Component {
 	constructor(props) {
 		super(props);
 		this.purchase = props.purchase
+		this.cellProps = {}
 
+		switch (this.purchase.status){
+			case 'pick':
+				this.cellProps.after = 'Выбор'
+				this.cellProps.caption = `Сбор начнётся ${this.purchase.billing_at}`
+				break
+
+			case 'bill':
+				this.cellProps.after = 'Сбор'
+				this.cellProps.caption = `Окончание сбора ${this.purchase.ending_at}`
+				break
+
+			case 'end':
+				this.cellProps.after = 'Окончен'
+				this.cellProps.caption = `Завершён ${this.purchase.ending_at}`
+				break
+		}
 	}
 
-	choosePurchase(){
+	choosePurchase() {
 		Backend.purchase_id = this.purchase.id
-		console.log(this.purchase.status, this.purchase.is_owner)
 		if (this.purchase.status === 'pick')
 			this.props.go('purchase')
+		else if (this.purchase.is_owner)
+			this.props.go('purchaseBill')
 		else
-			if (this.purchase.is_owner)
-				this.props.go('purchaseBill')
-			else
-				this.props.go('userBill')
-		}
+			this.props.go('userBill')
+	}
 
 	render() {
 		return (
-			<RichCell onClick={this.choosePurchase.bind(this)}
-				before={
-					<Div>
-						<Div>
-							{this.purchase.title}
-						</Div>
-						<Div>
-							{this.purchase.description}
-						</Div>
-					</Div>
-			}
+			<RichCell
+				onClick={this.choosePurchase.bind(this)}
+				text={this.purchase.description}
+				{...this.cellProps}
+				// // before={
+				// 	<Div>
+				// 		<Div>
+				// 			{this.purchase.title}
+				// 		</Div>
+				// 		<Div>
+				// 			{this.purchase.description}
+				// 		</Div>
+				// 	</Div>
+				// }
 
-				after={
-					<Div>
-						<Div>
-							{this.purchase.status}
-
-						</Div>
-						<Div>
-							{this.purchase.billing_at}
-						</Div>
-					</Div>
-				}/>
+				// after={
+				// <Div>
+				// 	<Div>
+				// 		{this.purchase.status}
+				//
+				// 	</Div>
+				// 	<Div>
+				// 		{this.purchase.billing_at}
+				// 	</Div>
+				// </Div>
+				// }
+			>
+				{this.purchase.title}
+			</RichCell>
 		)
 	}
 }

@@ -69,7 +69,7 @@ class Purchase extends React.Component {
     }
 
     refuseInvite(){
-        Backend.callMethod('get', 'invites/refuse', {invite_id: this.props.purchase.id}).then((response) => {console.log(response);
+        Backend.callMethod('get', 'invites/refuse', {invite_id: this.props.purchase.id}).then((response) => {
             if (response !== false)
                 this.setState({refused: true})
             else
@@ -79,33 +79,22 @@ class Purchase extends React.Component {
     }
 
     render() {
+        let props = {}
+        if (this.state.refused === false)
+            props.actions = (
+                <React.Fragment>
+                    <Button onClick={this.confirmInvite}>Принять</Button>
+                    <Button mode="danger" onClick={this.refuseInvite}>Отклонить</Button>
+                </React.Fragment>
+            )
+
         return (
             <RichCell
-                before={
-                    <Div>
-                        <Div>
-                            {this.props.purchase.title}
-                        </Div>
-                        <Div>
-                            {this.props.purchase.description}
-                        </Div>
-                    </Div>
-                }
-
-                after={
-                    this.state.refused === false && (
-                        <Group>
-
-                            <Div>
-                                <Button onClick={this.confirmInvite}>Принять</Button>
-                            </Div>
-                            <Div>
-                                <Button mode="danger" onClick={this.refuseInvite}>Отменить</Button>
-                            </Div>
-                        </Group>
-                    )
-                }
-            />
+                caption={this.props.purchase.description}
+                {...props}
+                >
+                {this.props.purchase.title}
+            </RichCell>
         )
     }
 }

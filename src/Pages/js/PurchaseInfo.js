@@ -155,7 +155,6 @@ class PurchaseInfo extends React.Component {
 
                     <PurchaseContext.Consumer>
                         {props => {
-                            console.log(props)
                             if (props.is_owner === true && props.status === 'pick')
                                 return (
                                     <Group>
@@ -469,98 +468,3 @@ class InvitedUsers extends React.Component{
 
 
 export default PurchaseInfo
-
-
-
-// <View activePanel="button">
-
-// </View>
-//
-// class Example extends React.Component {
-//     constructor(props) {
-//         super(props);
-//
-//         this.state = {
-//             popout: null,
-//             actionsLog: [],
-//         };
-//
-//         this.openAction = this.openAction.bind(this);
-//         this.openDeleteion = this.openDeleteion.bind(this);
-//         this.closePopout = this.closePopout.bind(this);
-//         this.addActionLogItem = this.addActionLogItem.bind(this);
-//     }
-//
-//     componentDidMount() {
-//         this.openDeleteion()
-//     }
-//
-//     addActionLogItem(value) {
-//         this.setState({
-//             actionsLog: [...this.state.actionsLog, value],
-//         });
-//     }
-//
-//     openAction () {
-//         this.setState({ popout:
-//                 <Alert
-//                     actions={[{
-//                         title: 'Лишить права',
-//                         mode: 'destructive',
-//                         autoclose: true,
-//                         action: () => this.addActionLogItem('Право на модерацию контента убрано.'),
-//                     }, {
-//                         title: 'Отмена',
-//                         autoclose: true,
-//                         mode: 'cancel'
-//                     }]}
-//                     actionsLayout="vertical"
-//                     onClose={this.closePopout}
-//                     header="Подтвердите действие"
-//                     text="Вы уверены, что хотите лишить пользователя права на модерацию контента?"
-//                 />
-//         });
-//     }
-//
-//     openDeleteion () {
-//         this.setState({ popout:
-//                 <Alert
-//                     actions={[{
-//                         title: 'Отмена',
-//                         autoclose: true,
-//                         mode: 'cancel'
-//                     }, {
-//                         title: 'Удалить',
-//                         autoclose: true,
-//                         mode: 'destructive',
-//                         action: () => this.addActionLogItem('Документ удален.'),
-//                     }]}
-//                     actionsLayout="horizontal"
-//                     onClose={this.closePopout}
-//                     header="Удаление документа"
-//                     text="Вы уверены, что хотите удалить этот документ?"
-//                 />
-//         });
-//     }
-//
-//     closePopout () {
-//         this.setState({ popout: null });
-//     }
-//
-//     render() {
-//         return (
-//             <View popout={this.state.popout} activePanel="alert">
-//                 <Panel id="alert">
-//                     <PanelHeader>Alert</PanelHeader>
-//                     <Group>
-//                         <CellButton onClick={this.openAction}>Лишить права</CellButton>
-//                         <CellButton onClick={this.openDeleteion}>Удалить документ</CellButton>
-//                         {this.state.actionsLog.map((value, i) => <Div key={i}>{value}</Div>)}
-//                     </Group>
-//                 </Panel>
-//             </View>
-//         )
-//     }
-// }
-//
-// <Example />

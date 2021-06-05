@@ -92,7 +92,6 @@ class App extends React.Component{
 export default App;
 
 // Checklist
-// todo Убрать кнопки редактирования и добавления участников в корзине статуса не пик
 // todo Поработать с главной страницей
 // todo Добавить редактирование
 
