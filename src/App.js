@@ -17,6 +17,7 @@ import EditProduct from "./Pages/js/EditProduct";
 import PurchaseInfo from "./Pages/js/PurchaseInfo";
 import UserInvites from "./Pages/js/UserInvites";
 import PurchaseBill from "./Pages/js/PurchseBill";
+import UserBill from "./Pages/js/UserBill";
 
 
 class App extends React.Component{
@@ -77,7 +78,8 @@ class App extends React.Component{
 						<Purchase id='purchase' go={this.go} goNode={this.goNode}/>
 						<PurchaseInfo id='purchaseInfo' go={this.go} goNode={this.goNode} setAlertPopout={this.setAlertPopout} deletePopout={this.deletePopout}/>
 
-						<PurchaseBill id={'purchaseBill'}  goNode={this.goNode}/>
+						<PurchaseBill id={'purchaseBill'}  goNode={this.goNode} go={this.go}/>
+						<UserBill id='userBill' go={this.go} goNode={this.goNode}/>
 
 						<EditProduct id='editProduct' go={this.go} goNode={this.goNode}/>
 					</View>

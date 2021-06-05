@@ -4,6 +4,7 @@ export class Backend{
     static authParams = null
     static serverURL = 'https://dezz.space'
     static purchase_id = undefined
+    static target_id = undefined
     static vk_token = undefined
 
     static async auth(){

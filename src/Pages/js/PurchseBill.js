@@ -3,64 +3,47 @@ import PropTypes from 'prop-types';
 import {
     Avatar,
     Button,
-    Cell,
-    CellButton,
-    Div,
-    IconButton,
+    Div, IconButton,
     Panel,
     PanelHeader,
     PanelHeaderBack,
-    RichCell, SubnavigationBar, SubnavigationButton, TooltipContainer
+    RichCell
 } from '@vkontakte/vkui';
 import {Backend} from "../../services/backendConnect";
 import bridge from "@vkontakte/vk-bridge";
+import {Icon24Info} from "@vkontakte/icons";
 
-const IsOwnerContext = React.createContext(undefined)
 
 class PurchaseBill extends React.Component{
     constructor(props) {
         super(props);
 
         this.state = {
-            is_owner: undefined,
-            bill: undefined
+            purchase: {},
         }
     }
 
     componentDidMount() {
-        Backend.callMethod('get', 'purchase/is_owner', {purchase_id: Backend.purchase_id}).then(response => {
+        Backend.callMethod('get', 'purchase/get', {purchase_id: Backend.purchase_id}).then(response => {
             if (response !== false)
-                this.setState({is_owner: response.is_owner})
+                this.setState({purchase: response})
         })
     }
 
     render() {
         return(
             <Panel id={this.props.id}>
-                <IsOwnerContext.Provider value={this.state.is_owner}>
-                    <PanelHeader
-                        left={<PanelHeaderBack onClick={this.props.goNode} data-to="main"/>}
-                    >
-                        Скинемся
-                    </PanelHeader>
-                    <Div>
-                        <Button stretched size="l" mode='secondary' onClick={this.props.goNode} data-to="purchaseInfo">
-                            Информация
-                        </Button>
-                    </Div>
+                <PanelHeader left={<PanelHeaderBack onClick={this.props.goNode} data-to="main"/>}>
+                    {this.state.purchase.title}
+                </PanelHeader>
 
+                <Div>
+                    <Button stretched size="l" mode='secondary' onClick={this.props.goNode} data-to="purchaseInfo">
+                        Информация
+                    </Button>
+                </Div>
 
-                    <IsOwnerContext.Consumer>
-                        {is_owner => {
-                            switch (is_owner){
-                                case true:
-                                    return <BillsList/>
-                                case false:
-                                    return <UserBill/>
-                            }
-                        }}
-                    </IsOwnerContext.Consumer>
-                </IsOwnerContext.Provider>
+                <BillsList go={this.props.go}/>
             </Panel>
         )
     }
@@ -101,7 +84,7 @@ class BillsList extends React.Component {
     }
 
     render() {
-        return this.state.users_data.map(user_data => (<TargetBill user_data={user_data}/>))
+        return this.state.users_data.map(user_data => (<TargetBill user_data={user_data} {...this.props}/>))
     }
 }
 
@@ -111,14 +94,14 @@ class TargetBill extends React.Component {
         super(props);
 
         this.state = {
-            bill: {
-                bill: 0
-            },
-            chosen: false,
+            bill: 0,
             status: undefined
         }
 
+        this.buttonClick = false
+
         this.confirmSend = this.confirmSend.bind(this)
+        this.showTargetBill = this.showTargetBill.bind(this)
     }
 
     componentDidMount() {
@@ -131,12 +114,14 @@ class TargetBill extends React.Component {
             if (response !== false)
                 Backend.callMethod('get', 'bill/status', params).then(status_response => {
                     if (status_response !== false)
-                        this.setState({status: status_response.status, bill: response})
+                        this.setState({status: status_response.status, bill: response.bill})
                 })
         })
     }
 
     confirmSend(){
+        this.buttonClick = true
+
         let params = {
             purchase_id: Backend.purchase_id,
             target_id: this.props.user_data.id
@@ -145,6 +130,16 @@ class TargetBill extends React.Component {
             if (response !== false)
                 this.setState({status: 'confirm'})
         })
+    }
+
+    showTargetBill(){
+        if (!this.buttonClick) {
+            Backend.target_id = this.props.user_data.id
+            this.props.go('userBill')
+        }
+        else
+            this.buttonClick = false
+
     }
 
     render() {
@@ -171,91 +166,12 @@ class TargetBill extends React.Component {
             <RichCell
                 multiline
                 before={<Avatar size={72} src={this.props.user_data.photo_100} />}
-                text={`${this.state.bill.bill} ₽`}
+                text={`${this.state.bill} ₽`}
                 {...props}
+                onClick={this.showTargetBill}
             >
                 {this.props.user_data.first_name} {this.props.user_data.last_name}
             </RichCell>
-        )
-    }
-}
-
-
-class UserBill extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            bill: 0,
-            status: undefined,
-            products: []
-        }
-
-        this.setSentStatus = this.setSentStatus.bind(this)
-    }
-
-    componentDidMount() {
-        Backend.callMethod('get', 'bill/get', {purchase_id: Backend.purchase_id}).then(response => {
-            if (response !== false)
-                Backend.callMethod('get', 'bill/status', {purchase_id: Backend.purchase_id}).then(status_response => {
-                    if (status_response !== false)
-                        this.setState({
-                            status: status_response.status,
-                            bill: response.bill,
-                            products: response.products
-                        })
-                })
-        })
-    }
-
-    setSentStatus() {
-        Backend.callMethod('get', 'bill/set_sent', {purchase_id: Backend.purchase_id}).then(response => {
-            if (response !== false)
-                this.setState({status: 'sent'})
-        })
-    }
-
-
-    render() {
-        return (
-            <Panel id={'bill'}>
-                {
-                    this.state.products.map(product_data => {
-                        let props = {}
-                        if (product_data.description)
-                            props.text = product_data.description
-
-                        return (
-                            <RichCell
-                                text={product_data.description}
-                                after={`${product_data.user_cost} ₽`}
-                                caption={`Общая цена: ${product_data.cost} ₽`}
-                                {...props}
-                            >
-                                {product_data.title}
-                            </RichCell>
-                        )
-                    })
-                }
-
-                <RichCell disabled/>
-
-                <TooltipContainer fixed style={{ position: 'fixed', bottom: 0, width: '100%' }}>
-                    <SubnavigationBar mode="fixed">
-                        <SubnavigationButton disabled size="l">
-                            {this.state.bill} ₽
-                        </SubnavigationButton>
-
-                        {
-                            this.state.status === 'wait' &&
-                            <SubnavigationButton size="l" selected stretched onClick={this.setSentStatus}>
-                                Скинулся
-                            </SubnavigationButton>
-                        }
-
-                    </SubnavigationBar>
-                </TooltipContainer>
-            </Panel>
         )
     }
 }

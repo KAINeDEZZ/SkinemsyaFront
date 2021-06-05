@@ -114,15 +114,15 @@ class Purchase extends React.Component {
 
 	choosePurchase(){
 		Backend.purchase_id = this.purchase.id
-		switch (this.purchase.status) {
-			case 'pick':
-				this.props.go('purchase')
-				break
-
-			case 'bill':
+		console.log(this.purchase.status, this.purchase.is_owner)
+		if (this.purchase.status === 'pick')
+			this.props.go('purchase')
+		else
+			if (this.purchase.is_owner)
 				this.props.go('purchaseBill')
+			else
+				this.props.go('userBill')
 		}
-	}
 
 	render() {
 		return (
