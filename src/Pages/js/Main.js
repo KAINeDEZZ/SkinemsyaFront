@@ -65,7 +65,7 @@ class Main extends React.Component{
 
 
 				<PurchasesList purchases={this.state.purchases} go={this.props.go}/>
-				<RichCell/>
+				<RichCell disabled/>
 
 				<TooltipContainer fixed style={{ position: 'fixed', bottom: 0, width: '100%' }}>
 					<Div>

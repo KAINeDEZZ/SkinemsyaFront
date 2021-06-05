@@ -93,7 +93,7 @@ class Purchase extends React.Component {
                     </Div>
 
                     <ProductsList go={this.props.go} setNotification={this.setNotification} updateBill={this.updateBill}/>
-                    <RichCell/>
+                    <RichCell disabled/>
 
                     <TooltipContainer fixed style={{position: 'fixed', bottom: 10, width: '100%'}}>
                         <SubnavigationBar mode="fixed">

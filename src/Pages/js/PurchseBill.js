@@ -10,15 +10,9 @@ import {
     Panel,
     PanelHeader,
     PanelHeaderBack,
-    RichCell
+    RichCell, SubnavigationBar, SubnavigationButton, TooltipContainer
 } from '@vkontakte/vkui';
 import {Backend} from "../../services/backendConnect";
-import {
-    Icon12CheckCircle,
-    Icon20BookOutline,
-    Icon20NotebookCheckOutline, Icon24Info, Icon24InfoCircleOutline,
-    Icon28CheckCircleFill, Icon28InfoCircleOutline, Icon36Done
-} from "@vkontakte/icons";
 import bridge from "@vkontakte/vk-bridge";
 
 const IsOwnerContext = React.createContext(undefined)
@@ -132,7 +126,7 @@ class TargetBill extends React.Component {
             purchase_id: Backend.purchase_id,
             target_id: this.props.user_data.id
         }
-        console.log(params)
+
         Backend.callMethod('get', 'bill/get', params).then(response => {
             if (response !== false)
                 Backend.callMethod('get', 'bill/status', params).then(status_response => {
@@ -155,11 +149,10 @@ class TargetBill extends React.Component {
 
     render() {
         let props = {}
-        console.log(this.state.status, this.props.user_data.id)
         if (this.props.user_data.id != Backend.authParams.user_id)
             switch (this.state.status) {
                 case 'wait':
-                    props.caption = 'Ещё не скинулся'
+                    props.caption = 'Пользователь ещё не скинулся'
                     break
 
                 case 'sent':
@@ -193,21 +186,76 @@ class UserBill extends React.Component {
         super(props);
 
         this.state = {
-            bill: {}
+            bill: 0,
+            status: undefined,
+            products: []
         }
+
+        this.setSentStatus = this.setSentStatus.bind(this)
     }
 
     componentDidMount() {
-        // Backend.callMethod('get', 'bill/get').then(response => {
-        //     if (response !== false)
-        //         this.setState({bill: response})
-        // })
+        Backend.callMethod('get', 'bill/get', {purchase_id: Backend.purchase_id}).then(response => {
+            if (response !== false)
+                Backend.callMethod('get', 'bill/status', {purchase_id: Backend.purchase_id}).then(status_response => {
+                    if (status_response !== false)
+                        this.setState({
+                            status: status_response.status,
+                            bill: response.bill,
+                            products: response.products
+                        })
+                })
+        })
+    }
+
+    setSentStatus() {
+        Backend.callMethod('get', 'bill/set_sent', {purchase_id: Backend.purchase_id}).then(response => {
+            if (response !== false)
+                this.setState({status: 'sent'})
+        })
     }
 
 
     render() {
-        return(
-            <Div>1234444</Div>
+        return (
+            <Panel id={'bill'}>
+                {
+                    this.state.products.map(product_data => {
+                        let props = {}
+                        if (product_data.description)
+                            props.text = product_data.description
+
+                        return (
+                            <RichCell
+                                text={product_data.description}
+                                after={`${product_data.user_cost} ₽`}
+                                caption={`Общая цена: ${product_data.cost} ₽`}
+                                {...props}
+                            >
+                                {product_data.title}
+                            </RichCell>
+                        )
+                    })
+                }
+
+                <RichCell disabled/>
+
+                <TooltipContainer fixed style={{ position: 'fixed', bottom: 0, width: '100%' }}>
+                    <SubnavigationBar mode="fixed">
+                        <SubnavigationButton disabled size="l">
+                            {this.state.bill} ₽
+                        </SubnavigationButton>
+
+                        {
+                            this.state.status === 'wait' &&
+                            <SubnavigationButton size="l" selected stretched onClick={this.setSentStatus}>
+                                Скинулся
+                            </SubnavigationButton>
+                        }
+
+                    </SubnavigationBar>
+                </TooltipContainer>
+            </Panel>
         )
     }
 }
