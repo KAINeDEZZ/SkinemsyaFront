@@ -23,7 +23,10 @@ import {
 
 import {Backend} from "../../services/backendConnect";
 
-const IsOwnerContext = React.createContext(undefined)
+const PurchaseContext = React.createContext({
+    is_owner: false,
+    status: ''
+})
 
 class PurchaseInfo extends React.Component {
     constructor(props) {
@@ -141,7 +144,7 @@ class PurchaseInfo extends React.Component {
     render() {
         return (
             <Panel id={this.props.id}>
-                <IsOwnerContext.Provider value={this.state.is_owner}>
+                <PurchaseContext.Provider value={{is_owner: this.state.is_owner, status: this.state.status}}>
 
                     <PanelHeader left={<PanelHeaderBack onClick={this.back}/>}>
                         Информация
@@ -150,9 +153,10 @@ class PurchaseInfo extends React.Component {
                     <PurchaseConfig go={this.props.go}/>
                     <PurchaseMembers go={this.props.go}/>
 
-                    <IsOwnerContext.Consumer>
-                        {is_owner => {
-                            if (is_owner)
+                    <PurchaseContext.Consumer>
+                        {props => {
+                            console.log(props)
+                            if (props.is_owner === true && props.status === 'pick')
                                 return (
                                     <Group>
                                         <Header>
@@ -170,20 +174,20 @@ class PurchaseInfo extends React.Component {
                                 )
 
                             else
-                                return (
-                                    <Group>
-                                        <Div>
-                                            <Button stretched size="l" mode="destructive" onClick={this.confirmLeavePurchase}>
-                                                Покинуть вкид
-                                            </Button>
-                                        </Div>
-                                    </Group>
-                                )
+                                if (props.status  === 'pick')
+                                    return (
+                                        <Group>
+                                            <Div>
+                                                <Button stretched size="l" mode="destructive" onClick={this.confirmLeavePurchase}>
+                                                    Покинуть вкид
+                                                </Button>
+                                            </Div>
+                                        </Group>
+                                    )
                         }}
 
-                    </IsOwnerContext.Consumer>
-
-                </IsOwnerContext.Provider>
+                    </PurchaseContext.Consumer>
+                </PurchaseContext.Provider>
             </Panel>
         )
     }
@@ -223,7 +227,7 @@ class PurchaseConfig extends React.Component{
                 </SimpleCell>
 
                 {
-                    this.state.description !== false &&
+                    this.state.purchase.description !== null &&
                     <SimpleCell>
                         <InfoRow header="Описание">
                             {this.state.purchase.description}
@@ -279,12 +283,12 @@ class PurchaseMembers extends React.Component{
             <Group>
                 <Members getUsersData={this.getUsersData} go={this.props.go} is_owner={this.props.is_owner}/>
 
-                <IsOwnerContext.Consumer>
-                    {is_owner => (
-                        is_owner === true &&
+                <PurchaseContext.Consumer>
+                    {props => (
+                        (props.is_owner === true && props.status === 'pick') &&
                         <InvitedUsers getUsersData={this.getUsersData} go={this.props.go}/>
                     )}
-                </IsOwnerContext.Consumer>
+                </PurchaseContext.Consumer>
 
             </Group>
         )
@@ -343,17 +347,17 @@ class Members extends React.Component{
                 <Header> Участники </Header>
                 {
                     this.state.members.map(member =>
-                        <IsOwnerContext.Consumer>
-                            { is_owner => (
+                        <PurchaseContext.Consumer>
+                            { props => (
                                 <Cell
-                                    removable={is_owner && member.id != Backend.authParams.user_id}
+                                    removable={props.is_owner && member.id != Backend.authParams.user_id && props.status === 'pick'}
                                     before={<Avatar src={member.photo_50}/>}
                                     onRemove={(event, prop, id=member.id) => this.deleteMember(id)}>
 
                                     {member.first_name} {member.last_name}
                                 </Cell>
                             )}
-                        </IsOwnerContext.Consumer>
+                        </PurchaseContext.Consumer>
                     )
                 }
             </Group>

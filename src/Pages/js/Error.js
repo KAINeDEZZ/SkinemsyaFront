@@ -26,11 +26,6 @@ class AuthError extends React.Component{
                         {'  Возможно, сервер сейчас недоступен'}
                     </label>
                 </Div>
-                <Div>
-                    <label>
-                        {'      Но скорее всего кодер долбаёб'}
-                    </label>
-                </Div>
             </Panel>
         )
     }
