@@ -9,22 +9,46 @@ import {
     PanelHeaderBack,
     Group,
     FormItem,
-    DatePicker, Textarea
+    Textarea, FormLayout
 } from '@vkontakte/vkui';
 
 import {Backend} from "../../services/backendConnect";
 
 
-class EditProduct extends React.Component{
+class EditProduct extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             purchase_id: Backend.purchase_id,
+
             title: '',
             description: '',
             cost: '',
-        };
+
+            errors: {}
+        }
+
+        this.back = this.back.bind(this)
+    }
+
+    componentDidMount() {
+        if (Backend.product_id)
+            Backend.callMethod('get', 'products/get', {
+                purchase_id: Backend.purchase_id,
+                product_id: Backend.product_id
+            }).then(
+                response => {
+                    if (response !== false) {
+
+                        this.setState({
+                            title: response.title,
+                            description: response.description,
+                            cost: response.cost
+                        })
+                    }
+                }
+            )
     }
 
     handleChange(element) {
@@ -33,56 +57,84 @@ class EditProduct extends React.Component{
         this.setState(changer);
     }
 
-    submit(){
+    submit() {
         if (this.validate()) {
-            Backend.callMethod('post', 'products/create', this.state).then(
-                response => {
-                    if (response !== false)
-                        this.props.go('purchase')
-
-                    else
-                        this.props.go('error')
+            {
+                let method
+                let params = {
+                    purchase_id: Backend.purchase_id,
+                    title: this.state.title,
+                    description: this.state.description,
+                    cost: this.state.cost
                 }
-            )
+
+                if (Backend.product_id) {
+                    method = 'products/edit'
+                    params.product_id = Backend.product_id
+                } else
+                    method = 'products/create'
+
+                Backend.callMethod('get', method, params).then(
+                    response => {
+                        if (response !== false) {
+                            this.back()
+                        }
+                    }
+                )
+            }
         }
     }
 
-    validate(){
+    validate() {
+        let errors = {}
         if (this.state.title === '')
-            return false
+            errors.title = 'Недопустипое значение'
 
-        if (isNaN(this.state.cost))
-            return false
+        if (!(this.state.cost >= 0) || this.state.cost === '')
+            errors.cost = 'Цена должна  быть положительным числом'
 
-        return parseInt(this.state.cost) >= 0;
+        this.setState({errors: errors})
 
+        return Object.keys(errors).length === 0
+    }
 
+    back(){
+        if (Backend.product_id !== undefined)
+            Backend.product_id = undefined
+
+        this.props.go('purchase')
     }
 
     render() {
         return (
             <Panel id={this.props.id}>
-                <PanelHeader left={<PanelHeaderBack onClick={this.props.goNode} data-to="main"/>}>
+                <PanelHeader left={<PanelHeaderBack onClick={this.back}/>}>
                     Продукт
                 </PanelHeader>
 
-                <Group>
-                    <FormItem top="Название">
-                        <Input name={"title"} defaulValue={this.state.title} onChange={this.handleChange.bind(this)}/>
-                    </FormItem>
+                <FormItem
+                    top="Название"
+                    status={this.state.errors.title ? 'error': true}
+                    bottom={this.state.errors.title ? this.state.errors.title: undefined}
+                >
+                    <Input name={"title"} defaultValue={this.state.title} onChange={this.handleChange.bind(this)}/>
+                </FormItem>
 
-                    <FormItem top="Описание">
-                        <Textarea name={"description"} defaulValue={this.state.description} onChange={this.handleChange.bind(this)}/>
-                    </FormItem>
+                <FormItem top="Описание">
+                    <Textarea name={"description"} value={this.state.description} onChange={this.handleChange.bind(this)}/>
+                </FormItem>
 
-                    <FormItem top="Цена">
-                        <Input name={"cost"} defaulValue={this.state.cost} onChange={this.handleChange.bind(this)}/>
-                    </FormItem>
+                <FormItem
+                    top="Цена"
+                    status={this.state.errors.cost ? 'error': true}
+                    bottom={this.state.errors.cost ? this.state.errors.cost: undefined}
+                >
+                    <Input name={"cost"} value={this.state.cost} onChange={this.handleChange.bind(this)}/>
+                </FormItem>
 
-                </Group>
-                <Div>
+                <FormItem>
                     <Button size="l" stretched onClick={this.submit.bind(this)}>Подтвердить</Button>
-                </Div>
+                </FormItem>
             </Panel>
         )
     }

@@ -6,6 +6,7 @@ export class Backend{
     static purchase_id = undefined
     static target_id = undefined
     static vk_token = undefined
+    static product_id = undefined
 
     static async auth(){
         let params = Backend.__getKeysToAuth()

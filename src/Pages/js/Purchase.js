@@ -56,7 +56,7 @@ class Purchase extends React.Component {
             if (response !== false) {
                 this.setState({bill: response.bill})
             } else
-                this.props.setNotification('error', false)
+                this.setNotification('error', false)
         })
     }
 
@@ -174,6 +174,7 @@ class Product extends React.Component {
         }
 
         this.pick = this.pick.bind(this)
+        this.showEdit = this.showEdit.bind(this)
     }
 
     pick() {
@@ -192,13 +193,18 @@ class Product extends React.Component {
         })
     }
 
+    showEdit(){
+        Backend.product_id = this.props.product.id
+        this.props.go('editProduct')
+    }
+
     render() {
         let after = (
             <IsOwnerContext.Consumer>
                 {is_owner => {
                     if (is_owner)
                         return (
-                            <IconButton>
+                            <IconButton onClick={this.showEdit}>
                                 <Icon28EditOutline/>
                             </IconButton>
                         )
@@ -208,13 +214,7 @@ class Product extends React.Component {
 
         return (
             <Cell selectable defaultChecked={this.state.picked} onChange={this.pick}
-                  before={
-                      <Div>
-                          <Div>
-                              {this.props.product.title}
-                          </Div>
-                      </Div>
-                  }
+                  before={this.props.product.title}
 
                   indicator={<Div>{this.props.product.cost} ₽</Div>}
                   description={<Div>{this.props.product.description}</Div>}
