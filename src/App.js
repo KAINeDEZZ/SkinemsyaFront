@@ -90,8 +90,3 @@ class App extends React.Component{
 }
 
 export default App;
-
-// Checklist
-// todo Поработать с главной страницей
-// todo Добавить редактирование
-

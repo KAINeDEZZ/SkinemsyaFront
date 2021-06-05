@@ -44,6 +44,7 @@ class PurchaseInfo extends React.Component {
         this.deletePurchase = this.deletePurchase.bind(this);
         this.leavePurchase = this.leavePurchase.bind(this)
         this.back = this.back.bind(this)
+        this.showEdit = this.showEdit.bind(this)
     }
 
     componentDidMount() {
@@ -141,6 +142,10 @@ class PurchaseInfo extends React.Component {
         )
     }
 
+    showEdit(){
+        this.props.go('editPurchase')
+    }
+
     render() {
         return (
             <Panel id={this.props.id}>
@@ -162,7 +167,7 @@ class PurchaseInfo extends React.Component {
                                             Управление вкидом
                                         </Header>
 
-                                        <CellButton before={<Icon28EditOutline/>}>
+                                        <CellButton before={<Icon28EditOutline/>} onClick={this.showEdit}>
                                             Редактировать
                                         </CellButton>
                                         <CellButton before={<Icon28DeleteOutline/>} mode="danger"

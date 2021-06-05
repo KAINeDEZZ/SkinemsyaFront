@@ -34,6 +34,8 @@ class Purchase extends React.Component {
             is_owner: false,
             bill: 0
         }
+
+        this.back = this.back.bind(this)
     }
 
     componentDidMount() {
@@ -77,12 +79,17 @@ class Purchase extends React.Component {
         })
     }
 
+    back(){
+        Backend.purchase_id = undefined
+        this.props.go('main')
+    }
+
     render() {
         return (
             <Panel id={this.props.id}>
                 <IsOwnerContext.Provider value={this.state.is_owner}>
 
-                    <PanelHeader left={<PanelHeaderBack onClick={this.props.goNode} data-to="main"/>}>
+                    <PanelHeader left={<PanelHeaderBack onClick={this.back}/>}>
                         {this.state.purchase.title}
                     </PanelHeader>
 

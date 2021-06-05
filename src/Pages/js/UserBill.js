@@ -85,8 +85,10 @@ class UserBill extends React.Component {
         if (Backend.target_id) {
             this.props.go('purchaseBill')
             Backend.target_id = undefined
-        } else
+        } else {
+            Backend.purchase_id = undefined
             this.props.go('main')
+        }
     }
 
     render() {
