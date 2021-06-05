@@ -31,7 +31,8 @@ class PurchaseInfo extends React.Component {
 
         this.state = {
             popout: null,
-            is_owner: null
+            is_owner: null,
+            status: undefined
         }
 
         this.confirmDelete = this.confirmDelete.bind(this);
@@ -39,18 +40,30 @@ class PurchaseInfo extends React.Component {
 
         this.deletePurchase = this.deletePurchase.bind(this);
         this.leavePurchase = this.leavePurchase.bind(this)
+        this.back = this.back.bind(this)
     }
 
     componentDidMount() {
-        Backend.callMethod('get', 'purchase/is_owner', {purchase_id: Backend.purchase_id}).then(
+        Backend.callMethod('get', 'purchase/get', {purchase_id: Backend.purchase_id}).then(
             response => {
-                this.setState({is_owner: response.is_owner})
+                this.setState({is_owner: response.is_owner, status: response.status})
             }
         )
     }
 
     is_owner() {
         return this.state.is_owner
+    }
+
+    back(){
+        if (this.state.status === 'pick')
+            this.props.go('purchase')
+
+        else
+            if (this.state.is_owner)
+                this.props.go('purchaseBill')
+            else
+                this.props.go('userBill')
     }
 
     confirmDelete() {
@@ -130,7 +143,7 @@ class PurchaseInfo extends React.Component {
             <Panel id={this.props.id}>
                 <IsOwnerContext.Provider value={this.state.is_owner}>
 
-                    <PanelHeader left={<PanelHeaderBack onClick={this.props.goNode} data-to="purchase"/>}>
+                    <PanelHeader left={<PanelHeaderBack onClick={this.back}/>}>
                         Информация
                     </PanelHeader>
 
