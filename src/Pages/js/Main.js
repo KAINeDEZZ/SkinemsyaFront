@@ -78,7 +78,7 @@ class Main extends React.Component{
 					<TooltipContainer fixed style={{ position: 'fixed', bottom: 0, width: '100%' }}>
 						<Div>
 							<Button stretched size="l" onClick={this.props.goNode} data-to="editPurchase">
-								Длбавить вкид
+								Добавить вкид
 							</Button>
 						</Div>
 					</TooltipContainer>
@@ -154,28 +154,6 @@ class Purchase extends React.Component {
 				onClick={this.choosePurchase.bind(this)}
 				text={this.purchase.description}
 				{...this.cellProps}
-				// // before={
-				// 	<Div>
-				// 		<Div>
-				// 			{this.purchase.title}
-				// 		</Div>
-				// 		<Div>
-				// 			{this.purchase.description}
-				// 		</Div>
-				// 	</Div>
-				// }
-
-				// after={
-				// <Div>
-				// 	<Div>
-				// 		{this.purchase.status}
-				//
-				// 	</Div>
-				// 	<Div>
-				// 		{this.purchase.billing_at}
-				// 	</Div>
-				// </Div>
-				// }
 			>
 				{this.purchase.title}
 			</RichCell>
