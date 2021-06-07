@@ -105,7 +105,7 @@ class PurchasesList extends React.Component {
 				{
 					this.props.purchases.length === 0 &&
 						<Div>
-							Вкиды не найденны
+							Вкиды не найдены
 						</Div>
 				}
 			</List>
