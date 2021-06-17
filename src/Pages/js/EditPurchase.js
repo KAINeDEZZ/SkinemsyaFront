@@ -200,7 +200,7 @@ class EditPurchase extends React.Component{
                         bottom={this.state.errors.billing_at ? this.state.errors.billing_at: undefined}
                     >
                         <DatePicker
-                            min={{day: 1, month: 1, year: 2100}}
+                            min={{day: 1, month: 1, year: 2000}}
                             max={{day: 1, month: 1, year: 2100}}
                             onDateChange={(value, name='billing_at') => this.handleChangeDate(value, name)}
                             dayPlaceholder="День"
@@ -215,7 +215,7 @@ class EditPurchase extends React.Component{
                         bottom={this.state.errors.ending_at ? this.state.errors.ending_at: undefined}
                     >
                         <DatePicker
-                            min={{day: 1, month: 1, year: 2100}}
+                            min={{day: 1, month: 1, year: 2000}}
                             max={{day: 1, month: 1, year: 2100}}
                             onDateChange={(value, name='ending_at') => this.handleChangeDate(value, name)}
                             dayPlaceholder="День"
